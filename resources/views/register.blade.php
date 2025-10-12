@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Raketin</title>
+  <title>Daftar - Raketin</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#E9F0FB]">
@@ -25,32 +25,40 @@
       </ul>
       <!-- Buttons -->
       <div class="flex space-x-3">
-        <a href="#" class="bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700">Masuk</a>
-        <a href="#" class="bg-blue-200 text-blue-700 px-4 py-1 rounded-lg hover:bg-blue-300">Daftar</a>
+        <a href="login" class="bg-blue-200 text-blue-700 px-4 py-1 rounded-lg hover:bg-blue-300">Masuk</a>
+        <a href="register" class="bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700">Daftar</a>
       </div>
     </div>
   </nav>
 
-  <!-- Login Form -->
+  <!-- Register Form -->
   <div class="flex justify-center items-center min-h-[80vh]">
-    <div class="bg-white p-8 rounded-xl shadow-md w-[350px]">
-      <h2 class="text-2xl font-bold text-center text-gray-800">Masuk ke Akun Anda</h2>
-      <p class="text-sm text-gray-500 text-center mb-6">Sewa lapangan badminton dengan mudah</p>
+    <div class="bg-white p-8 rounded-xl shadow-md w-[380px]">
+      <h2 class="text-2xl font-bold text-center text-gray-800">Buat Akun Baru</h2>
+      <p class="text-sm text-gray-500 text-center mb-6">Daftar untuk mulai sewa lapangan badminton</p>
 
       <form>
+        <!-- Nama Lengkap -->
+        <input type="text" placeholder="Nama Lengkap" class="w-full px-4 py-2 mb-4 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+
         <!-- Username -->
         <input type="text" placeholder="Username" class="w-full px-4 py-2 mb-4 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-        
-        <!-- Password -->
-        <input type="password" placeholder="Password" class="w-full px-4 py-2 mb-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
 
-      
+        <!-- Email -->
+        <input type="email" placeholder="Email" class="w-full px-4 py-2 mb-4 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+
+        <!-- Password -->
+        <input type="password" placeholder="Password" class="w-full px-4 py-2 mb-4 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+
+        <!-- Konfirmasi Password -->
+        <input type="password" placeholder="Konfirmasi Password" class="w-full px-4 py-2 mb-6 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+
         <!-- Button -->
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Masuk</button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Daftar</button>
       </form>
 
       <p class="text-sm text-gray-600 text-center mt-4">
-        Belum punya akun? <a href="register" class="text-blue-500 hover:underline">Daftar di sini</a>
+        Sudah punya akun? <a href="login" class="text-blue-500 hover:underline">Masuk di sini</a>
       </p>
     </div>
   </div>
