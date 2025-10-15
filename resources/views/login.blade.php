@@ -11,28 +11,7 @@
 <body class="bg-[#E9F0FB]">
 
   <!-- Navbar -->
-  <nav class="bg-[#D8E2F3] shadow-sm">
-    <div class="container mx-auto flex justify-between items-center px-6 py-3">
-      <!-- Logo -->
-      <div class="flex items-center space-x-2">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8">
-        <span class="text-lg font-bold text-gray-700">RAKETIN</span>
-      </div>
-      <!-- Menu -->
-      <ul class="flex space-x-8 text-gray-700 font-medium">
-        <li><a href="#" class="hover:text-blue-600">Beranda</a></li>
-        <li><a href="#" class="hover:text-blue-600">Lapangan</a></li>
-        <li><a href="#" class="hover:text-blue-600">Tentang Kami</a></li>
-        <li><a href="#" class="hover:text-blue-600">Kontak</a></li>
-      </ul>
-      <!-- Buttons -->
-      <div class="flex space-x-3">
-        <a href="#" class="bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700">Masuk</a>
-        <a href="#" class="bg-blue-200 text-blue-700 px-4 py-1 rounded-lg hover:bg-blue-300">Daftar</a>
-      </div>
-    </div>
-  </nav>
-
+  @include('layouts.navbar')
   <!-- Login Form -->
   <div class="flex justify-center items-center min-h-[80vh]">
     <div class="bg-white p-8 rounded-xl shadow-md w-[350px]">

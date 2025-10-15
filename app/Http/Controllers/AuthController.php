@@ -18,16 +18,30 @@ class AuthController extends Controller
     // Proses login
     public function login(Request $request)
     {
+        // 1. WAJIB: Validasi dan Definisi $credentials
         $credentials = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
+        // Opsional: Membersihkan spasi untuk pencegahan bug login
+        $credentials['username'] = trim($credentials['username']);
+        
+        // 2. Coba Auth::attempt
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard')->with('success', 'Berhasil login!');
+            
+            // 3. Cek Role dan Pengarahan
+            if (Auth::user()->role === 'admin') {
+                // Admin diarahkan ke rute yang bernama 'admin.dashboard'
+                return redirect()->intended(route('admin.dashboard'))->with('success', 'Berhasil login sebagai Admin!');
+            }
+            
+            // Pengarahan default ke dashboard user
+            return redirect()->intended(route('dashboard'))->with('success', 'Berhasil login!');
         }
 
+        // 4. Pengarahan saat Gagal
         return back()->withErrors([
             'username' => 'Username atau password salah.',
         ])->onlyInput('username');
@@ -54,9 +68,10 @@ class AuthController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'user', // Default role 'user' saat register
         ]);
 
-        return redirect('/login')->with('success', 'Akun berhasil dibuat! Silakan login.');
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login.');
     }
 
     // Logout
@@ -65,6 +80,13 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login')->with('success', 'Berhasil logout.');
+        // PERBAIKAN: Arahkan ke halaman login, bukan dashboard.
+        return redirect()->route('login')->with('success', 'Berhasil logout.'); 
+    }
+    
+    public function dashboard()
+    {
+        // Tampilkan view dashboard user biasa
+        return view('dashboard'); 
     }
 }
