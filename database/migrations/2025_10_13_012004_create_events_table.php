@@ -20,6 +20,7 @@ return new class extends Migration
             
             // Kolom Data Event
             $table->string('nama_event');
+            $table->string('lokasi');
             $table->text('deskripsi');
             $table->dateTime('tanggal_mulai');
             $table->dateTime('tanggal_selesai')->nullable();

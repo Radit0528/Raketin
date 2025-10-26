@@ -20,7 +20,6 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Lapangan</th>
-                            <th>Tipe</th>
                             <th>Harga/Jam</th>
                             <th>Gambar</th>
                             <th>Aksi</th>
@@ -31,7 +30,6 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $lapangan->nama }}</td>
-                            <td>{{ $lapangan->tipe_lapangan }}</td>
                             <td>Rp {{ number_format($lapangan->harga_per_jam) }}</td>
                             <td>
                                 @if ($lapangan->gambar)

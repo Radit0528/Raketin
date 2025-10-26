@@ -6,7 +6,7 @@
  <title>Beranda - Raketin</title>
  <script src="https://cdn.tailwindcss.com"></script>
   {{-- Tambahkan script Font Awesome untuk ikon di bawah (jika belum ada) --}}
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+ <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-[#E9F0FB]">
 

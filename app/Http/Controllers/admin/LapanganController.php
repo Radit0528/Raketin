@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Lapangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule; 
+use Illuminate\Validation\Rule;
 
 class LapanganController extends Controller
 {
@@ -14,7 +14,6 @@ class LapanganController extends Controller
     public function index()
     {
         $lapangans = Lapangan::orderBy('id', 'desc')->get();
-        // Memuat view dengan data lapangan
         return view('admin.lapangan', compact('lapangans'));
     }
 
@@ -29,19 +28,18 @@ class LapanganController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'tipe_lapangan' => 'required|string',
             'deskripsi' => 'nullable|string',
             'harga_per_jam' => 'required|integer|min:0',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $data = $request->except('gambar');
 
         if ($request->hasFile('gambar')) {
             // Simpan gambar di storage/app/public/lapangan_images
-            $path = $request->file('gambar')->store('public/lapangan_images');
-            // Dapatkan URL publik untuk disimpan di database
-            $data['gambar'] = Storage::url($path); 
+            $path = $request->file('gambar')->store('lapangan_images', 'public');
+            // Simpan URL publik ke database (bisa langsung dipanggil dengan asset())
+            $data['gambar'] = '/storage/' . $path;
         } else {
             $data['gambar'] = null;
         }
@@ -62,25 +60,23 @@ class LapanganController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'tipe_lapangan' => 'required|string',
             'deskripsi' => 'nullable|string',
             'harga_per_jam' => 'required|integer|min:0',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-        
+
         $data = $request->except('gambar');
 
         if ($request->hasFile('gambar')) {
-            // Hapus gambar lama
+            // Hapus gambar lama jika ada
             if ($lapangan->gambar) {
-                // Konversi URL publik ke path internal storage
                 $oldPath = str_replace('/storage/', 'public/', $lapangan->gambar);
                 Storage::delete($oldPath);
             }
 
-            // Simpan gambar baru
-            $path = $request->file('gambar')->store('public/lapangan_images');
-            $data['gambar'] = Storage::url($path);
+            // Simpan gambar baru di storage/app/public/lapangan_images
+            $path = $request->file('gambar')->store('lapangan_images', 'public');
+            $data['gambar'] = '/storage/' . $path;
         }
 
         $lapangan->update($data);
@@ -91,7 +87,7 @@ class LapanganController extends Controller
     // [D]ELETE: Menghapus lapangan
     public function destroy(Lapangan $lapangan)
     {
-        // Hapus gambar dari storage
+        // Hapus gambar dari storage jika ada
         if ($lapangan->gambar) {
             $oldPath = str_replace('/storage/', 'public/', $lapangan->gambar);
             Storage::delete($oldPath);

@@ -19,6 +19,7 @@ class Event extends Model
         // 'court_id',
         // 'organizer_id',
         'nama_event',
+        'lokasi',
         'deskripsi',
         'tanggal_mulai',
         'tanggal_selesai',

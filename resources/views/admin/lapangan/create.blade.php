@@ -38,16 +38,11 @@
                         <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}" required>
                     </div>
 
-                    {{-- Tipe Lapangan --}}
+                    {{-- Alamat Lapangan --}}
                     <div class="mb-3">
-                        <label for="tipe_lapangan" class="form-label">Tipe Lapangan <span class="text-danger">*</span></label>
-                        <select class="form-control" id="tipe_lapangan" name="tipe_lapangan" required>
-                            <option value="">Pilih Tipe</option>
-                            {{-- Anda dapat menambahkan tipe lapangan sesuai kebutuhan Anda --}}
-                            <option value="Badminton" {{ old('tipe_lapangan') == 'Badminton' ? 'selected' : '' }}>Badminton</option>
-                            <option value="Futsal" {{ old('tipe_lapangan') == 'Futsal' ? 'selected' : '' }}>Futsal</option>
-                            <option value="Basket" {{ old('tipe_lapangan') == 'Basket' ? 'selected' : '' }}>Basket</option>
-                        </select>
+                        <label for="alamat" class="form-label">Alamat Lapangan <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="alamat" name="alamat" rows="2" required>{{ old('alamat') }}</textarea>
+                        <small class="form-text text-muted">Masukkan alamat lengkap lokasi lapangan.</small>
                     </div>
 
                     {{-- Harga per Jam --}}

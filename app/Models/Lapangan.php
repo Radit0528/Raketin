@@ -15,7 +15,6 @@ class Lapangan extends Model
     // Kolom yang dapat diisi
     protected $fillable = [
         'nama',
-        'tipe_lapangan',
         'deskripsi',
         'harga_per_jam',
         'gambar', 

@@ -43,21 +43,6 @@
                     @enderror
                 </div>
 
-                {{-- Input Tipe Lapangan --}}
-                <div class="mb-3">
-                    <label for="tipe_lapangan" class="form-label">Tipe Lapangan</label>
-                    <select class="form-select @error('tipe_lapangan') is-invalid @enderror" id="tipe_lapangan" name="tipe_lapangan" required>
-                        {{-- Menggunakan data lama atau data yang sudah ada --}}
-                        @php $tipeLama = old('tipe_lapangan', $lapangan->tipe_lapangan); @endphp
-                        <option value="Badminton" @if($tipeLama == 'Badminton') selected @endif>Badminton</option>
-                        <option value="Futsal" @if($tipeLama == 'Futsal') selected @endif>Futsal</option>
-                        <option value="Basket" @if($tipeLama == 'Basket') selected @endif>Basket</option>
-                    </select>
-                    @error('tipe_lapangan')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                
                 {{-- Input Harga Per Jam --}}
                 <div class="mb-3">
                     <label for="harga_per_jam" class="form-label">Harga Per Jam (Rp)</label>

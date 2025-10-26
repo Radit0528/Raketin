@@ -36,7 +36,8 @@
                             <td>{{ $event->nama_event }}</td>
                             <td>{{ $event->tanggal_mulai->format('d M Y H:i') }}</td>
                             <td>{{ $event->organizer->username ?? 'N/A' }}</td>
-                            <td>{{ $event->court->nama ?? 'N/A' }}</td>
+                            <!-- <td>{{ $event->court->nama ?? 'N/A' }}</td> -->
+                            <td>{{ $event->lokasi }}</td>
                             <td>Rp {{ number_format($event->biaya_pendaftaran) }}</td>
                             <td>
                                 @if ($event->status === 'upcoming')
