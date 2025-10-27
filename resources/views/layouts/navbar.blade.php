@@ -7,10 +7,10 @@
         </div>
 
         <ul class="flex space-x-8 text-gray-700 font-medium">
-            <li><a href="#" class="text-blue-600">Beranda</a></li>
-            <li><a href="#" class="hover:text-blue-600">Lapangan</a></li>
-            <li><a href="#" class="hover:text-blue-600">Event</a></li>
-            <li><a href="#" class="hover:text-blue-600">Profil</a></li>
+            <li><a href="/" class="text-blue-600">Beranda</a></li>
+            <li><a href="/" class="hover:text-blue-600">Lapangan</a></li>
+            <li><a href="/" class="hover:text-blue-600">Event</a></li>
+            <li><a href="/" class="hover:text-blue-600">Profil</a></li>
         </ul>
 
         <div class="flex space-x-3">

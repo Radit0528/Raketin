@@ -5,9 +5,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DashboardController; // Tambahkan import ini
-use App\Http\Controllers\Admin\LapanganController;   // Tambahkan import ini
+use App\Http\Controllers\Admin\LapanganController as AdminLapanganController;   // Tambahkan import ini
 use App\Http\Controllers\Admin\EventController;     // Tambahkan import ini
 use App\Http\Controllers\HomeController;     // Tambahkan import ini
+use App\Http\Controllers\LapanganController;
 
 
 // routes/web.php
@@ -33,6 +34,7 @@ Route::middleware('auth')->group(function () {
     
     // Rute Dashboard User Biasa
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard'); 
+    
 });
 
 
@@ -43,6 +45,10 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     // Pengelolaan Resource
-    Route::resource('lapangan', LapanganController::class);
+    Route::resource('lapangan', AdminLapanganController::class);
     Route::resource('event', EventController::class);
 });
+
+Route::get('/lapangan', [LapanganController::class, 'index'])->name('lapangan.index');
+Route::get('/lapangan/{id}', [LapanganController::class, 'show'])->name('lapangan.detail');
+

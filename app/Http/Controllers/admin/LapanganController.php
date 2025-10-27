@@ -97,4 +97,6 @@ class LapanganController extends Controller
 
         return redirect()->route('lapangan.index')->with('success', 'Lapangan berhasil dihapus!');
     }
+
+    
 }
