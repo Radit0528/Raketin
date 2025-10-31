@@ -52,3 +52,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
 Route::get('/lapangan', [LapanganController::class, 'index'])->name('lapangan.index');
 Route::get('/lapangan/{id}', [LapanganController::class, 'show'])->name('lapangan.detail');
 
+// Route untuk halaman pilih waktu
+Route::get('/lapangan/{id}/pilih-waktu', [App\Http\Controllers\LapanganController::class, 'pilihWaktu'])
+    ->name('lapangan.pilihWaktu');
+
