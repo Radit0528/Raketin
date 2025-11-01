@@ -49,6 +49,8 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->group(fu
     Route::resource('event', EventController::class);
 });
 
+Route::get('/cari-lapangan', [LapanganController::class, 'search'])->name('lapangan.search');
+
 Route::get('/lapangan', [LapanganController::class, 'index'])->name('lapangan.index');
 Route::get('/lapangan/{id}', [LapanganController::class, 'show'])->name('lapangan.detail');
 
