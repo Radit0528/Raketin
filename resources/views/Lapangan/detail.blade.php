@@ -95,10 +95,10 @@
                 </div>
 
                 <a id="pesanBtn"
-   href="#"
-   class="block text-center w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition">
-   Pesan Sekarang
-</a>
+                    href="#"
+                    class="block text-center w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition">
+                    Pesan Sekarang
+                </a>
 
 
             </div>
@@ -158,7 +158,9 @@
                 calendarEl.appendChild(btn);
             }
 
-            const monthName = date.toLocaleString("id-ID", { month: "long" });
+            const monthName = date.toLocaleString("id-ID", {
+                month: "long"
+            });
             monthYearEl.textContent = `${monthName} ${year}`;
         }
 
@@ -186,7 +188,7 @@
         });
 
         renderCalendar(currentDate);
-</script>
+    </script>
 
 </body>
 

@@ -78,8 +78,13 @@
     <script>
         // Ambil tanggal dari backend
         const tanggalDipilih = "{{ $tanggalDipilih }}"; // dari Laravel
-        const selectedDate = new Date(tanggalDipilih);
-        const hargaPerJam = {{ $lapangan->harga_per_jam }};
+
+        // ✅ Parse tanggal dengan benar menggunakan local timezone
+        const [year, month, day] = tanggalDipilih.split('-').map(Number);
+        const selectedDate = new Date(year, month - 1, day);
+
+        const hargaPerJam = "{{ $lapangan->harga_per_jam }}";
+
 
         const monthYearEl = document.getElementById("monthYear");
         const calendarDaysEl = document.getElementById("calendarDays");
@@ -99,10 +104,9 @@
         ];
 
         function renderCalendar() {
-            const date = new Date(tanggalDipilih);
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            const selectedDay = date.getDate();
+            const year = selectedDate.getFullYear();
+            const month = selectedDate.getMonth();
+            const selectedDay = selectedDate.getDate();
 
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
@@ -126,10 +130,8 @@
                 const btn = document.createElement("button");
                 btn.textContent = day;
                 btn.className = "p-2 rounded-lg hover:bg-gray-100 transition text-gray-700";
-                const fullDate = new Date(year, month, day);
-                const dateString = fullDate.toISOString().split("T")[0];
 
-                if (dateString === tanggalDipilih) {
+                if (day === selectedDay) {
                     btn.classList.add("bg-blue-600", "text-white", "font-semibold");
                 } else {
                     btn.classList.add("text-gray-400", "cursor-not-allowed", "opacity-60");
@@ -139,7 +141,8 @@
                 calendarDaysEl.appendChild(btn);
             }
 
-            selectedDateEl.textContent = date.toLocaleDateString("id-ID", {
+            // ✅ Format tanggal dengan benar untuk display
+            selectedDateEl.textContent = selectedDate.toLocaleDateString("id-ID", {
                 day: "numeric",
                 month: "long",
                 year: "numeric"
