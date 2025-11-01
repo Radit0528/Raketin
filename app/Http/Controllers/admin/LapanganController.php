@@ -13,7 +13,7 @@ class LapanganController extends Controller
     // [R]EAD: Menampilkan daftar lapangan
     public function index()
     {
-        $lapangans = Lapangan::orderBy('id', 'desc')->get();
+        $lapangans = Lapangan::orderBy('id', 'asc')->get();
         return view('admin.lapangan', compact('lapangans'));
     }
 
@@ -28,6 +28,7 @@ class LapanganController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
+            'lokasi' => 'nullable|string',
             'deskripsi' => 'nullable|string',
             'harga_per_jam' => 'required|integer|min:0',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -60,6 +61,7 @@ class LapanganController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
+            'lokasi' => 'nullable|string',
             'deskripsi' => 'nullable|string',
             'harga_per_jam' => 'required|integer|min:0',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',

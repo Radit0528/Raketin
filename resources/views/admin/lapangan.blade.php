@@ -20,6 +20,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Lapangan</th>
+                            <th>Lokasi</th>
                             <th>Harga/Jam</th>
                             <th>Gambar</th>
                             <th>Aksi</th>
@@ -30,6 +31,7 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $lapangan->nama }}</td>
+                            <td>{{ $lapangan->lokasi }}</td>
                             <td>Rp {{ number_format($lapangan->harga_per_jam) }}</td>
                             <td>
                                 @if ($lapangan->gambar)

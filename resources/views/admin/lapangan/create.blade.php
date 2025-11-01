@@ -38,11 +38,10 @@
                         <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}" required>
                     </div>
 
-                    {{-- Alamat Lapangan --}}
+                    {{-- Lokasi Lapangan --}}
                     <div class="mb-3">
-                        <label for="alamat" class="form-label">Alamat Lapangan <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="alamat" name="alamat" rows="2" required>{{ old('alamat') }}</textarea>
-                        <small class="form-text text-muted">Masukkan alamat lengkap lokasi lapangan.</small>
+                        <label for="alamat" class="form-label">Lokasi Lapangan <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="lokasi" name="lokasi" rows="2" required>{{ old('lokasi') }}</textarea>
                     </div>
 
                     {{-- Harga per Jam --}}

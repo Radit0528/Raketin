@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('lapangans', function (Blueprint $table) {
             $table->id();
             $table->string('nama', 100);
+            $table->text('lokasi')->nullable();
             $table->text('deskripsi')->nullable();
             $table->integer('harga_per_jam'); // Menyimpan harga dalam integer (rupiah)
             $table->string('gambar')->nullable(); // Menyimpan path gambar di storage

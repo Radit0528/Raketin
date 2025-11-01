@@ -43,6 +43,19 @@
                     @enderror
                 </div>
 
+                {{-- Input Lokasi --}}
+                <div class="mb-3">
+                    <label for="lokasi" class="form-label">Lokasi</label>
+                    <input type="text" 
+                           class="form-control @error('lokasi') is-invalid @enderror" 
+                           id="lokasi" name="lokasi" 
+                           value="{{ old('lokasi', $lapangan->lokasi) }}" 
+                           placeholder="Contoh: Purwokerto, Banyumas" required>
+                    @error('lokasi')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 {{-- Input Harga Per Jam --}}
                 <div class="mb-3">
                     <label for="harga_per_jam" class="form-label">Harga Per Jam (Rp)</label>
