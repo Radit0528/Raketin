@@ -20,4 +20,9 @@ class Lapangan extends Model
         'harga_per_jam',
         'gambar', 
     ];
+    public function events()
+{
+    return $this->hasMany(Event::class);
+}
+
 }

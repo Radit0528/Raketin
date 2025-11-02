@@ -24,14 +24,22 @@
                     @enderror
                 </div>
 
-                {{-- 2. Lokasi --}}
-                <div class="mb-3">
-                    <label for="lokasi" class="form-label">Lokasi Event (Nama Tempat/Alamat)</label>
-                    <input type="text" name="lokasi" id="lokasi" class="form-control @error('lokasi') is-invalid @enderror" value="{{ old('lokasi') }}" required>
-                    @error('lokasi')
+                {{-- 2. Pilih Lapangan --}}
+                <div class="mb-4">
+                    <label for="lapangan_id" class="block text-sm font-medium text-gray-700">Pilih Lapangan</label>
+                    <select name="lapangan_id" id="lapangan_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm @error('lapangan_id') is-invalid @enderror" required>
+                        <option value="">-- Pilih Lapangan --</option>
+                        @foreach ($lapangans as $lap)
+                            <option value="{{ $lap->id }}" {{ old('lapangan_id') == $lap->id ? 'selected' : '' }}>
+                                {{ $lap->nama }} - {{ $lap->lokasi }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('lapangan_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
 
                 {{-- 3. Biaya Pendaftaran --}}
                 <div class="mb-3">

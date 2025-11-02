@@ -21,7 +21,6 @@
                             <th>No</th>
                             <th>Nama Event</th>
                             <th>Tanggal Mulai</th>
-                            <th>Organizer</th>
                             <th>Lokasi Lapangan</th>
                             <th>Biaya Daftar</th>
                             <th>Status</th>
@@ -35,7 +34,6 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $event->nama_event }}</td>
                             <td>{{ $event->tanggal_mulai->format('d M Y H:i') }}</td>
-                            <td>{{ $event->organizer->username ?? 'N/A' }}</td>
                             <!-- <td>{{ $event->court->nama ?? 'N/A' }}</td> -->
                             <td>{{ $event->lokasi }}</td>
                             <td>Rp {{ number_format($event->biaya_pendaftaran) }}</td>

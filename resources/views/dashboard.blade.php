@@ -98,7 +98,7 @@
                                     Mulai: {{ \Carbon\Carbon::parse($event->tanggal_mulai)->translatedFormat('d M Y, H:i') }}
                                 </span>
                             </div>
-                            <a href="#" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition duration-150">Daftar Event</a>
+                            <a href="{{ route('event.detail', $event->id) }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition duration-150">Lihat Detail</a>
                         </div>
                     </div>
                 </div>

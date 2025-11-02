@@ -9,6 +9,9 @@ use App\Http\Controllers\Admin\LapanganController as AdminLapanganController;   
 use App\Http\Controllers\Admin\EventController;     // Tambahkan import ini
 use App\Http\Controllers\HomeController;     // Tambahkan import ini
 use App\Http\Controllers\LapanganController;
+use App\Http\Controllers\EventController as PublicEventController;
+
+
 
 
 // routes/web.php
@@ -57,4 +60,7 @@ Route::get('/lapangan/{id}', [LapanganController::class, 'show'])->name('lapanga
 // Route untuk halaman pilih waktu
 Route::get('/lapangan/{id}/pilih-waktu', [App\Http\Controllers\LapanganController::class, 'pilihWaktu'])
     ->name('lapangan.pilihWaktu');
+
+Route::get('/event', [PublicEventController::class, 'index'])->name('event.list');
+Route::get('/event/{id}', [PublicEventController::class, 'show'])->name('event.detail');
 

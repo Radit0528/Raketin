@@ -4,24 +4,25 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\Lapangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
     // [R]EAD: Menampilkan daftar event
     public function index()
     {
-        $events = Event::orderBy('tanggal_mulai', 'desc')->get();
+        $events = Event::with('lapangan')->orderBy('tanggal_mulai', 'desc')->get();
         return view('admin.event', compact('events'));
     }
 
     // [C]REATE: Menampilkan form tambah
     public function create()
     {
-        return view('admin.event.create');
+        $lapangans = Lapangan::all();
+        return view('admin.event.create', compact('lapangans'));
     }
 
     // [C]REATE: Memproses dan menyimpan data baru
@@ -29,7 +30,7 @@ class EventController extends Controller
     {
         $request->validate([
             'nama_event' => 'required|string|max:255',
-            'lokasi' => 'required|string|max:255',
+            'lapangan_id' => 'nullable|exists:lapangans,id',
             'deskripsi' => 'required|string',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'nullable|date|after:tanggal_mulai',
@@ -40,16 +41,18 @@ class EventController extends Controller
 
         $data = $request->except('gambar');
 
-        if ($request->hasFile('gambar')) {
-            // Simpan gambar di storage/app/public/event_images
-            $path = $request->file('gambar')->store('event_images', 'public');
-            $data['gambar'] = '/storage/' . $path; // path publik untuk Blade
-        } else {
-            $data['gambar'] = null;
+        // Ambil lokasi otomatis dari lapangan yang dipilih
+        if ($request->filled('lapangan_id')) {
+            $lapangan = Lapangan::find($request->lapangan_id);
+            if ($lapangan) {
+                $data['lokasi'] = $lapangan->lokasi;
+            }
         }
 
-        // Hapus FK yang tidak digunakan (jika ada)
-        unset($data['court_id'], $data['organizer_id']);
+        if ($request->hasFile('gambar')) {
+            $path = $request->file('gambar')->store('event_images', 'public');
+            $data['gambar'] = '/storage/' . $path;
+        }
 
         Event::create($data);
 
@@ -59,7 +62,8 @@ class EventController extends Controller
     // [U]PDATE: Menampilkan form edit
     public function edit(Event $event)
     {
-        return view('admin.event.edit', compact('event'));
+        $lapangans = Lapangan::all();
+        return view('admin.event.edit', compact('event', 'lapangans'));
     }
 
     // [U]PDATE: Memproses dan menyimpan perubahan
@@ -67,7 +71,7 @@ class EventController extends Controller
     {
         $request->validate([
             'nama_event' => 'required|string|max:255',
-            'lokasi' => 'required|string|max:255',
+            'lapangan_id' => 'nullable|exists:lapangans,id',
             'deskripsi' => 'required|string',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'nullable|date|after:tanggal_mulai',
@@ -78,20 +82,23 @@ class EventController extends Controller
 
         $data = $request->except('gambar');
 
+        // Ambil lokasi otomatis dari lapangan yang dipilih
+        if ($request->filled('lapangan_id')) {
+            $lapangan = Lapangan::find($request->lapangan_id);
+            if ($lapangan) {
+                $data['lokasi'] = $lapangan->lokasi;
+            }
+        }
+
         if ($request->hasFile('gambar')) {
-            // Hapus gambar lama jika ada
             if ($event->gambar) {
                 $oldPath = str_replace('/storage/', 'public/', $event->gambar);
                 Storage::delete($oldPath);
             }
 
-            // Simpan gambar baru di storage/app/public/event_images
             $path = $request->file('gambar')->store('event_images', 'public');
             $data['gambar'] = '/storage/' . $path;
         }
-
-        // Hapus FK yang tidak digunakan (jika ada)
-        unset($data['court_id'], $data['organizer_id']);
 
         $event->update($data);
 
@@ -111,9 +118,10 @@ class EventController extends Controller
         return redirect()->route('event.index')->with('success', 'Event berhasil dihapus!');
     }
 
-    // [R]EAD: Menampilkan detail event (opsional)
+    // [R]EAD: Menampilkan detail event
     public function show(Event $event)
     {
+        $event->load('lapangan'); // Ambil data lapangan juga
         return view('admin.event.show', compact('event'));
     }
 }

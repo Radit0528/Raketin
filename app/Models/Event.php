@@ -33,6 +33,11 @@ class Event extends Model
         'tanggal_mulai' => 'datetime',
         'tanggal_selesai' => 'datetime',
     ];
+    public function lapangan()
+{
+    return $this->belongsTo(Lapangan::class);
+}
+
 
     // --- RELATIONS ---
 
