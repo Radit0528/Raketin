@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Beranda - Raketin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 
@@ -69,7 +70,7 @@
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Event Mendatang</h2>
-                <a href="{{ route('event.index') }}" class="text-blue-600 hover:underline">Lihat Semua</a>
+                <a href="{{ route('event.search') }}" class="text-blue-600 hover:underline">Lihat Semua</a>
             </div>
 
             <div class="space-y-6">
@@ -105,19 +106,6 @@
                 @empty
                 <p class="text-center text-gray-500 p-8 border rounded-lg bg-[#F7F9FC]">Saat ini tidak ada event yang akan datang. Cek kembali nanti!</p>
                 @endforelse
-            </div>
-        </div>
-    </section>
-
-    <!-- Pencarian Cepat -->
-    <section class="py-12">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Pencarian Cepat</h2>
-
-            <div class="flex flex-col md:flex-row justify-center gap-4">
-                <button class="bg-blue-100 text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-200 flex items-center justify-center gap-2 font-semibold transition duration-150"><i class="fas fa-map-marker-alt"></i> Lapangan di Dekat Saya</button>
-                <button class="bg-blue-100 text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-200 flex items-center justify-center gap-2 font-semibold transition duration-150"><i class="fas fa-calendar-alt"></i> Event Mendatang</button>
-                <button class="bg-blue-100 text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-200 flex items-center justify-center gap-2 font-semibold transition duration-150"><i class="fas fa-user-friends"></i> Cari Pemain</button>
             </div>
         </div>
     </section>

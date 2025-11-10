@@ -62,5 +62,6 @@ Route::get('/lapangan/{id}/pilih-waktu', [App\Http\Controllers\LapanganControlle
     ->name('lapangan.pilihWaktu');
 
 Route::get('/event', [PublicEventController::class, 'index'])->name('event.list');
+Route::get('/cari-event', [PublicEventController::class, 'search'])->name('event.search');
 Route::get('/event/{id}', [PublicEventController::class, 'show'])->name('event.detail');
 

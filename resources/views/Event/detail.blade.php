@@ -4,9 +4,14 @@
 <div class="container my-5">
     {{-- Banner / Gambar Event --}}
     @if($event->gambar)
-        <div class="rounded overflow-hidden shadow-sm mb-4">
-            <img src="{{ asset($event->gambar) }}" class="w-100" alt="{{ $event->nama_event }}">
-        </div>
+    <div class="flex justify-center mb-4">
+    <div class="rounded overflow-hidden shadow-sm">
+        <img src="{{ asset($event->gambar) }}" 
+             alt="{{ $event->nama_event }}" 
+             class="w-[150%] max-w-md object-contain rounded-lg shadow-md">
+    </div>
+</div>
+
     @endif
 
     {{-- Judul Event --}}

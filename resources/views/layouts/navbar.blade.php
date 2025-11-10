@@ -30,9 +30,9 @@
     </li>
 
     <li>
-        <a href="{{ route('event.index') }}"
+    <a href="{{ route('event.search') }}"
            class="pb-1 border-b-2 transition duration-150 ease-in-out
-           {{ request()->routeIs('event.*') 
+           {{ request()->is('event') || request()->is('event/*') || request()->is('cari-event') 
                ? 'text-blue-600 font-semibold border-blue-600' 
                : 'border-transparent hover:text-blue-600 hover:border-blue-600' }}">
            Event

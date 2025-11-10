@@ -18,9 +18,8 @@ class HomeController extends Controller
         
         // Mengambil Event yang akan datang (tanggal_mulai >= hari ini)
         // dan mengurutkannya berdasarkan tanggal terdekat.
-        $events = Event::where('tanggal_mulai', '>=', now())
-                       ->orderBy('tanggal_mulai')
-                       ->take(3) // Batasi jumlah event yang ditampilkan
+        $events = Event::orderBy('tanggal_mulai', 'desc')
+                       ->take(3)
                        ->get();
 
         return view('dashboard', compact('lapangans', 'events'));
