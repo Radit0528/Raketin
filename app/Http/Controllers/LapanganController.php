@@ -53,4 +53,44 @@ class LapanganController extends Controller
 
         return view('lapangan.search', compact('lapangans'));
     }
+
+    /**
+     * Menampilkan halaman checkout untuk booking lapangan
+     */
+    public function checkout($id)
+    {
+        $lapangan = Lapangan::findOrFail($id);
+        return view('lapangan.checkout', compact('lapangan'));
+    }
+
+    /**
+     * Check availability of lapangan via AJAX
+     * 
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkAvailability(Request $request, $id)
+    {
+        $request->validate([
+            'tanggal_booking' => 'required|date',
+            'jam_mulai' => 'required',
+            'jam_selesai' => 'required',
+        ]);
+
+        $lapangan = Lapangan::findOrFail($id);
+
+        $isAvailable = $lapangan->isAvailable(
+            $request->tanggal_booking,
+            $request->jam_mulai,
+            $request->jam_selesai
+        );
+
+        return response()->json([
+            'available' => $isAvailable,
+            'message' => $isAvailable
+                ? 'Lapangan tersedia pada waktu yang dipilih'
+                : 'Lapangan sudah dibooking pada waktu tersebut. Silakan pilih waktu lain.'
+        ]);
+    }
 }

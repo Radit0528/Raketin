@@ -66,10 +66,11 @@
                     Rp <span id="totalPrice">0</span>
                 </p>
 
-                <button
+                <button id="continueBtn"
                     class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition">
                     Continue to Payment
                 </button>
+
             </div>
 
         </div>
@@ -190,6 +191,24 @@
             selectedDurationEl.textContent = `${selectedSlots.length} jam`;
             totalPriceEl.textContent = (selectedSlots.length * hargaPerJam).toLocaleString("id-ID");
         }
+
+        document.getElementById('continueBtn').addEventListener('click', () => {
+            if (selectedSlots.length === 0) {
+                alert("Pilih minimal 1 jam bermain!");
+                return;
+            }
+
+            const date = selectedDateEl.textContent;
+            const start = selectedSlots[0];
+            const end = slotTimes[slotTimes.indexOf(selectedSlots[selectedSlots.length - 1]) + 1];
+            const duration = selectedSlots.length;
+
+            const url = "{{ route('lapangan.checkout', $lapangan->id) }}" +
+                `?tanggal=${tanggalDipilih}&start=${start}&end=${end}&durasi=${duration}`;
+
+            window.location.href = url;
+        });
+
 
         renderCalendar();
     </script>

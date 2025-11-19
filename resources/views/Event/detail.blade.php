@@ -5,12 +5,12 @@
     {{-- Banner / Gambar Event --}}
     @if($event->gambar)
     <div class="flex justify-center mb-4">
-    <div class="rounded overflow-hidden shadow-sm">
-        <img src="{{ asset($event->gambar) }}" 
-             alt="{{ $event->nama_event }}" 
-             class="w-[150%] max-w-md object-contain rounded-lg shadow-md">
+        <div class="rounded overflow-hidden shadow-sm">
+            <img src="{{ asset($event->gambar) }}"
+                alt="{{ $event->nama_event }}"
+                class="w-[150%] max-w-md object-contain rounded-lg shadow-md">
+        </div>
     </div>
-</div>
 
     @endif
 
@@ -40,16 +40,19 @@
                 <div class="card-body">
                     <h5 class="fw-bold mb-3">Informasi Event</h5>
                     <p><strong>Tanggal Mulai:</strong> {{ \Carbon\Carbon::parse($event->tanggal_mulai)->translatedFormat('d F Y, H:i') }}</p>
-                    <p><strong>Tanggal Selesai:</strong> 
+                    <p><strong>Tanggal Selesai:</strong>
                         {{ $event->tanggal_selesai ? \Carbon\Carbon::parse($event->tanggal_selesai)->translatedFormat('d F Y, H:i') : '-' }}
                     </p>
                     <p><strong>Biaya Pendaftaran:</strong> Rp{{ number_format($event->biaya_pendaftaran, 0, ',', '.') }}</p>
-                    <p><strong>Status:</strong> 
+                    <p><strong>Status:</strong>
                         <span class="badge bg-{{ $event->status == 'upcoming' ? 'primary' : ($event->status == 'finished' ? 'success' : 'secondary') }}">
                             {{ ucfirst($event->status) }}
                         </span>
                     </p>
-                    <a href="#" class="btn btn-primary w-100 mt-3">Daftar Event</a>
+                    <a href="{{ route('event.checkout', $event->id) }}" class="btn btn-primary w-100 mt-3">
+                        Daftar Event
+                    </a>
+
                 </div>
             </div>
         </div>

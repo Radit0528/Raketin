@@ -5,19 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
     use HasFactory;
 
     // Menentukan primary key jika namanya bukan 'id' (tapi di migrasi Anda sudah 'id')
-    protected $primaryKey = 'id'; 
+    protected $primaryKey = 'id';
     protected $table = 'events';
 
     // Kolom yang dapat diisi melalui mass assignment (sesuai migrasi)
     protected $fillable = [
-        // 'court_id',
-        // 'organizer_id',
         'nama_event',
         'lokasi',
         'deskripsi',
@@ -32,28 +31,47 @@ class Event extends Model
     protected $casts = [
         'tanggal_mulai' => 'datetime',
         'tanggal_selesai' => 'datetime',
+        'biaya_pendaftaran' => 'decimal:2',
     ];
-    public function lapangan()
-{
-    return $this->belongsTo(Lapangan::class);
-}
-
-
-    // --- RELATIONS ---
 
     /**
-     * Relasi ke Lapangan (Court)
+     * Relasi ke Lapangan
      */
-    // public function court(): BelongsTo
-    // {
-    //     return $this->belongsTo(Lapangan::class, 'court_id');
-    // }
+    public function lapangan(): BelongsTo
+    {
+        return $this->belongsTo(Lapangan::class);
+    }
 
-    // /**
-    //  * Relasi ke User (Organizer)
-    //  */
-    // public function organizer(): BelongsTo
-    // {
-    //     return $this->belongsTo(User::class, 'organizer_id');
-    // }
+    /**
+     * Relasi ke Transactions (Untuk Payment Midtrans)
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'item_id')
+                    ->where('tipe_transaksi', 'event');
+    }
+
+    /**
+     * Get successful transactions only
+     */
+    public function successfulTransactions(): HasMany
+    {
+        return $this->transactions()->where('status_pembayaran', 'success');
+    }
+
+    /**
+     * Get total pendapatan dari event ini
+     */
+    public function getTotalPendapatanAttribute()
+    {
+        return $this->successfulTransactions()->sum('total_harga');
+    }
+
+    /**
+     * Get jumlah peserta yang sudah bayar
+     */
+    public function getJumlahPesertaAttribute()
+    {
+        return $this->successfulTransactions()->count();
+    }
 }
