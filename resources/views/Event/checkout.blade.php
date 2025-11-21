@@ -56,24 +56,24 @@
                             <h5 class="mb-3">Data Peserta</h5>
 
                             <div class="mb-3">
-                                <label for="nama_customer" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="nama_customer" name="nama_customer" required>
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="nama" name="nama" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="email_customer" class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="email_customer" name="email_customer" required>
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="phone_customer" class="form-label">No. Telepon <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="phone_customer" name="phone_customer" required>
+                                <label class="form-label">No. Telepon</label>
+                                <input type="text" class="form-control" id="phone" name="phone" required>
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg" id="payButton">
-                                    Bayar Sekarang - Rp {{ number_format($event->biaya_pendaftaran, 0, ',', '.') }}
-                                </button>
+                            <button type="submit" class="btn btn-primary btn-lg" id="payButton">
+                                Bayar Sekarang - Rp {{ number_format($event->biaya_pendaftaran) }}
+                            </button>
                             </div>
                         </form>
                     </div>

@@ -1,7 +1,3 @@
-<?php
-// Catatan: File ini akan dimuat oleh LapanganController@create
-// dan akan memposting data ke LapanganController@store
-?>
 @extends('layouts.admin')
 
 @section('title', 'Tambah Lapangan')
@@ -28,39 +24,62 @@
                     </div>
                 @endif
                 
-                {{-- Form mengarah ke LapanganController@store --}}
                 <form method="POST" action="{{ route('lapangan.store') }}" enctype="multipart/form-data">
                     @csrf
                     
                     {{-- Nama Lapangan --}}
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Lapangan <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}" required>
+                        <label class="form-label">Nama Lapangan <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="nama" value="{{ old('nama') }}" required>
                     </div>
 
-                    {{-- Lokasi Lapangan --}}
+                    {{-- Lokasi --}}
                     <div class="mb-3">
-                        <label for="alamat" class="form-label">Lokasi Lapangan <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="lokasi" name="lokasi" rows="2" required>{{ old('lokasi') }}</textarea>
+                        <label class="form-label">Lokasi Lapangan <span class="text-danger">*</span></label>
+                        <textarea class="form-control" name="lokasi" rows="2" required>{{ old('lokasi') }}</textarea>
                     </div>
 
-                    {{-- Harga per Jam --}}
+                    {{-- Harga --}}
                     <div class="mb-3">
-                        <label for="harga_per_jam" class="form-label">Harga per Jam (Rp) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="harga_per_jam" name="harga_per_jam" value="{{ old('harga_per_jam') }}" required min="0">
+                        <label class="form-label">Harga per Jam (Rp) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="harga_per_jam" value="{{ old('harga_per_jam') }}" required min="0">
                     </div>
 
                     {{-- Deskripsi --}}
                     <div class="mb-3">
-                        <label for="deskripsi" class="form-label">Deskripsi</label>
-                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3">{{ old('deskripsi') }}</textarea>
+                        <label class="form-label">Deskripsi</label>
+                        <textarea class="form-control" name="deskripsi" rows="3">{{ old('deskripsi') }}</textarea>
+                    </div>
+
+                    {{-- Fasilitas Lapangan --}}
+                    <div class="mb-4">
+                        <label class="form-label d-block">Fasilitas Lapangan</label>
+
+                        <div class="row g-2">
+                            @php
+                                $fasilitasList = [
+                                    'Toilet', 'Loker', 'Area Tunggu', 'Parkir',
+                                    'Mushola', 'Kantin', 'Wifi', 'Kursi Penonton'
+                                ];
+                            @endphp
+
+                            @foreach ($fasilitasList as $fa)
+                                <div class="col-md-6">
+                                    <label class="border rounded p-2 d-flex align-items-center gap-2 facility-item"
+                                           style="cursor:pointer;">
+                                        <input type="checkbox" name="fasilitas[]" value="{{ $fa }}">
+                                        <span>{{ $fa }}</span>
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
 
                     {{-- Gambar --}}
                     <div class="mb-4">
-                        <label for="gambar" class="form-label">Gambar Lapangan</label>
-                        <input type="file" class="form-control" id="gambar" name="gambar" accept="image/*">
-                        <small class="form-text text-muted">Maksimal 2MB (jpeg, png, jpg).</small>
+                        <label class="form-label">Gambar Lapangan</label>
+                        <input type="file" class="form-control" name="gambar" accept="image/*">
+                        <small class="text-muted">Maksimal 2MB (jpeg, png, jpg).</small>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Simpan Lapangan</button>
@@ -70,4 +89,21 @@
         </div>
     </div>
 </div>
+
+{{-- Script Interaktif Checkbox --}}
+<script>
+document.querySelectorAll(".facility-item").forEach(item => {
+    item.addEventListener("click", () => {
+        const checkbox = item.querySelector("input");
+        checkbox.checked = !checkbox.checked;
+
+        if (checkbox.checked) {
+            item.classList.add("border-primary", "bg-light");
+        } else {
+            item.classList.remove("border-primary", "bg-light");
+        }
+    });
+});
+</script>
+
 @endsection

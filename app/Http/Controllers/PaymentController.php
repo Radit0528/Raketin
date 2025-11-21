@@ -34,7 +34,7 @@ class PaymentController extends Controller
             'nama' => $request->nama,
             'email' => $request->email,
             'phone' => $request->phone,
-            'amount' => $event->harga,
+            'amount' => $event->biaya_pendaftaran,
             'status_pembayaran' => 'pending'
         ]);
 
@@ -42,7 +42,7 @@ class PaymentController extends Controller
         $params = [
             'transaction_details' => [
                 'order_id' => 'EV-' . $transaction->id . '-' . time(),
-                'gross_amount' => $event->harga,
+                'gross_amount' => $event->biaya_pendaftaran,
             ],
             'customer_details' => [
                 'first_name' => $transaction->nama,
@@ -52,7 +52,7 @@ class PaymentController extends Controller
             'item_details' => [
                 [
                     'id' => $event->id,
-                    'price' => $event->harga,
+                    'price' => $event->biaya_pendaftaran,
                     'quantity' => 1,
                     'name' => "Pendaftaran Event: " . $event->nama,
                 ]

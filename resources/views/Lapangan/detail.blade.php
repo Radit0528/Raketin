@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail Lapangan - Raketin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
@@ -40,18 +41,42 @@
                 </p>
 
                 <h3 class="text-lg font-semibold text-gray-800 mb-3">Fasilitas</h3>
-                <div class="flex flex-wrap gap-4 mb-6">
-                    <div class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg text-blue-700 font-medium">
-                        <i class="fas fa-restroom"></i> Toilet
-                    </div>
-                    <div class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg text-blue-700 font-medium">
-                        <i class="fas fa-lock"></i> Loker
-                    </div>
-                    <div class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg text-blue-700 font-medium">
-                        <i class="fas fa-couch"></i> Area Tunggu
-                    </div>
+
+                @php
+                    $icons = [
+                        'Toilet' => 'fa-toilet',
+                        'Loker' => 'fa-lock',
+                        'Area Tunggu' => 'fa-couch',
+                        'Parkir' => 'fa-car',
+                        'Mushola' => 'fa-mosque',
+                        'Kantin' => 'fa-utensils',
+                        'Wifi' => 'fa-wifi',
+                        'Kursi Penonton' => 'fa-chair',
+                    ];
+
+                    $fasilitasArray = !empty($lapangan->fasilitas)
+                        ? array_map('trim', explode(',', $lapangan->fasilitas))
+                        : [];
+                @endphp
+
+                <div class="flex flex-wrap gap-3 mb-6">
+                    @foreach ($fasilitasArray as $fa)
+                        <div class="inline-flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg text-blue-700 font-medium">
+                            <i class="fa-solid {{ $icons[$fa] ?? 'fa-circle-check' }} text-l"></i>
+                            <span class="text-l">{{ $fa }}</span>
+                        </div>
+                    @endforeach
                 </div>
-            </div>
+
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Lokasi</h3>
+                {{-- Contoh embed map, bisa disimpan di DB juga kalau mau --}}
+                <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm">
+                    <iframe
+                        src="https://www.google.com/maps?q={{ urlencode($lapangan->lokasi) }}&output=embed"
+                        width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy">
+                    </iframe>
+                </div>
+        </div>
 
             <!-- Sidebar Harga & Kalender -->
             <div class="bg-white shadow-md rounded-xl p-6 h-fit">

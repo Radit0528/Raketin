@@ -34,7 +34,7 @@ class AuthController extends Controller
             // 3. Cek Role dan Pengarahan
             if (Auth::user()->role === 'admin') {
                 // Admin diarahkan ke rute yang bernama 'admin.dashboard'
-                return redirect()->intended(route('admin.dashboard'))->with('success', 'Berhasil login sebagai Admin!');
+                return redirect()->intended(route('dashboard'))->with('success', 'Berhasil login sebagai Admin!');
             }
             
             // Pengarahan default ke dashboard user

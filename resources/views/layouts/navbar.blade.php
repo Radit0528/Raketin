@@ -9,54 +9,56 @@
 
         {{-- Navigasi --}}
         <ul class="flex space-x-8 text-gray-700 font-medium">
-    <li>
-        <a href="{{ url('/') }}"
-           class="pb-1 border-b-2 transition duration-150 ease-in-out
-           {{ request()->is('/') 
-               ? 'text-blue-600 font-semibold border-blue-600' 
-               : 'border-transparent hover:text-blue-600 hover:border-blue-600' }}">
-           Beranda
-        </a>
-    </li>
+            <li>
+                <a href="{{ url('/') }}"
+                   class="pb-1 border-b-2 transition duration-150 ease-in-out
+                   {{ request()->is('/') 
+                       ? 'text-blue-600 font-semibold border-blue-600' 
+                       : 'border-transparent hover:text-blue-600 hover:border-blue-600' }}">
+                   Beranda
+                </a>
+            </li>
 
-    <li>
-        <a href="{{ route('lapangan.search') }}"
-           class="pb-1 border-b-2 transition duration-150 ease-in-out
-           {{ request()->is('lapangan') || request()->is('lapangan/*') || request()->is('cari-lapangan') 
-               ? 'text-blue-600 font-semibold border-blue-600' 
-               : 'border-transparent hover:text-blue-600 hover:border-blue-600' }}">
-           Lapangan
-        </a>
-    </li>
+            <li>
+                <a href="{{ route('lapangan.search') }}"
+                   class="pb-1 border-b-2 transition duration-150 ease-in-out
+                   {{ request()->is('lapangan') || request()->is('lapangan/*') || request()->is('cari-lapangan') 
+                       ? 'text-blue-600 font-semibold border-blue-600' 
+                       : 'border-transparent hover:text-blue-600 hover:border-blue-600' }}">
+                   Lapangan
+                </a>
+            </li>
 
-    <li>
-    <a href="{{ route('event.search') }}"
-           class="pb-1 border-b-2 transition duration-150 ease-in-out
-           {{ request()->is('event') || request()->is('event/*') || request()->is('cari-event') 
-               ? 'text-blue-600 font-semibold border-blue-600' 
-               : 'border-transparent hover:text-blue-600 hover:border-blue-600' }}">
-           Event
-        </a>
-    </li>
+            <li>
+                <a href="{{ route('event.search') }}"
+                   class="pb-1 border-b-2 transition duration-150 ease-in-out
+                   {{ request()->is('event') || request()->is('event/*') || request()->is('cari-event') 
+                       ? 'text-blue-600 font-semibold border-blue-600' 
+                       : 'border-transparent hover:text-blue-600 hover:border-blue-600' }}">
+                   Event
+                </a>
+            </li>
 
-    <li>
-        <a href="{{ url('/profil') }}"
-           class="pb-1 border-b-2 transition duration-150 ease-in-out
-           {{ request()->is('profil') || request()->is('profil/*') 
-               ? 'text-blue-600 font-semibold border-blue-600' 
-               : 'border-transparent hover:text-blue-600 hover:border-blue-600' }}">
-           Profil
-        </a>
-    </li>
-</ul>
+            {{-- Profil hanya muncul jika login --}}
+            @auth
+            <li>
+                <a href="{{ url('/profil') }}"
+                   class="pb-1 border-b-2 transition duration-150 ease-in-out
+                   {{ request()->is('profil') || request()->is('profil/*') 
+                       ? 'text-blue-600 font-semibold border-blue-600' 
+                       : 'border-transparent hover:text-blue-600 hover:border-blue-600' }}">
+                   Profil
+                </a>
+            </li>
+            @endauth
+        </ul>
 
-
-
-        {{-- Tombol Login / Logout --}}
+        {{-- Tombol Login / Logout / Dashboard --}}
         <div class="flex space-x-3">
+
             @guest
-                <a href="{{ route('login') }}" class="bg-blue-200 text-blue-700 px-4 py-1 rounded-lg hover:bg-blue-300 transition duration-150 ease-in-out">Masuk</a>
-                <a href="{{ route('register') }}" class="bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Daftar</a>
+                <a href="{{ route('login') }}" class="bg-blue-200 text-blue-700 px-4 py-1 rounded-lg hover:bg-blue-300 transition duration-150">Masuk</a>
+                <a href="{{ route('register') }}" class="bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700 transition duration-150">Daftar</a>
             @endguest
 
             @auth
@@ -65,17 +67,18 @@
                     $dashboardLabel = Auth::user()->role === 'admin' ? 'Dashboard Admin' : 'Dashboard';
                 @endphp
 
-                <a href="{{ $dashboardRoute }}" class="bg-green-500 text-white px-4 py-1 rounded-lg hover:bg-green-600 transition duration-150 ease-in-out">
+                <a href="{{ $dashboardRoute }}" class="bg-green-500 text-white px-4 py-1 rounded-lg hover:bg-green-600 transition duration-150">
                     {{ $dashboardLabel }}
                 </a>
 
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600 transition duration-150 ease-in-out">
+                    <button type="submit" class="bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600 transition duration-150">
                         Logout
                     </button>
                 </form>
             @endauth
+
         </div>
     </div>
 </nav>

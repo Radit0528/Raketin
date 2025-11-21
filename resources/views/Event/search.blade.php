@@ -51,6 +51,17 @@
                 <button class="px-4 py-1 rounded-md text-sm font-semibold text-gray-700 hover:bg-gray-200">Grid</button>
             </div>
         </div>
+        <!-- Button Tambah Event -->
+        <div class="mb-6">
+            <a href="https://wa.me/6281234567890?text=Halo%20admin,%20saya%20ingin%20menambah%20atau%20membuat%20event%20di%20platform%20Raketin."
+            target="_blank"
+            class="inline-flex items-center bg-green-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-green-700 transition">
+                <span class="text-2xl font-bold ">+</span>
+                <i class="fab fa-whatsapp text-xl mr-2"></i>
+                Buat Event
+            </a>
+        </div>
+
 
         <!-- Hasil Pencarian -->
         <h2 class="text-lg font-bold mb-4">Daftar Event</h2>

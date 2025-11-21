@@ -52,7 +52,7 @@
                         <div class="nav">
                             
                             <div class="sb-sidenav-menu-heading">Utama</div>
-                            <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                            <a class="nav-link" href="{{ route('dashboard') }}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
                             </a>
