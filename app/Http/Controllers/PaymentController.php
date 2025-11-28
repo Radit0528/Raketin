@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Midtrans\Snap;
-use Midtrans\Config;
-use App\Models\Transaction;
 use App\Models\Event;
 use App\Models\Lapangan;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;   // <── Tambahkan ini
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class PaymentController extends Controller
 {
     public function __construct()
     {
-        // Konfigurasi Midtrans global
         Config::$serverKey = config('midtrans.server_key');
         Config::$clientKey = config('midtrans.client_key');
-        Config::$isProduction = false; // SANDBOX
+        Config::$isProduction = false;
         Config::$isSanitized = true;
         Config::$is3ds = true;
     }
@@ -30,18 +30,18 @@ class PaymentController extends Controller
 
         // simpan transaksi
         $transaction = Transaction::create([
+            'user_id' => Auth::id(),    // <── Tambah user_id
             'event_id' => $event->id,
             'nama' => $request->nama,
             'email' => $request->email,
             'phone' => $request->phone,
             'amount' => $event->biaya_pendaftaran,
-            'status_pembayaran' => 'pending'
+            'status_pembayaran' => 'pending',
         ]);
 
-        // Data Midtrans
         $params = [
             'transaction_details' => [
-                'order_id' => 'EV-' . $transaction->id . '-' . time(),
+                'order_id' => 'EV-'.$transaction->id.'-'.time(),
                 'gross_amount' => $event->biaya_pendaftaran,
             ],
             'customer_details' => [
@@ -54,16 +54,16 @@ class PaymentController extends Controller
                     'id' => $event->id,
                     'price' => $event->biaya_pendaftaran,
                     'quantity' => 1,
-                    'name' => "Pendaftaran Event: " . $event->nama,
-                ]
-            ]
+                    'name' => 'Pendaftaran Event: '.$event->nama,
+                ],
+            ],
         ];
 
         $snapToken = Snap::getSnapToken($params);
 
         return response()->json([
             'success' => true,
-            'snap_token' => $snapToken
+            'snap_token' => $snapToken,
         ]);
     }
 
@@ -74,15 +74,14 @@ class PaymentController extends Controller
     {
         $lapangan = Lapangan::findOrFail($id);
 
-        $mulai   = $request->jam_mulai;
+        $mulai = $request->jam_mulai;
         $selesai = $request->jam_selesai;
 
-        // hitung durasi
         $durasi = (strtotime($selesai) - strtotime($mulai)) / 3600;
         $totalHarga = $lapangan->harga_per_jam * $durasi;
 
-        // Simpan transaksi
         $transaction = Transaction::create([
+            'user_id' => Auth::id(),     // <── Tambah user_id
             'lapangan_id' => $lapangan->id,
             'nama' => $request->nama_customer,
             'email' => $request->email_customer,
@@ -92,13 +91,12 @@ class PaymentController extends Controller
             'jam_selesai' => $selesai,
             'durasi' => $durasi,
             'amount' => $totalHarga,
-            'status_pembayaran' => 'pending'
+            'status_pembayaran' => 'pending',
         ]);
 
-        // Data Midtrans
         $params = [
             'transaction_details' => [
-                'order_id' => 'LP-' . $transaction->id . '-' . time(),
+                'order_id' => 'LP-'.$transaction->id.'-'.time(),
                 'gross_amount' => $totalHarga,
             ],
             'customer_details' => [
@@ -111,9 +109,9 @@ class PaymentController extends Controller
                     'id' => $lapangan->id,
                     'price' => $lapangan->harga_per_jam,
                     'quantity' => $durasi,
-                    'name' => "Sewa Lapangan: " . $lapangan->nama,
-                ]
-            ]
+                    'name' => 'Sewa Lapangan: '.$lapangan->nama,
+                ],
+            ],
         ];
 
         $snapToken = Snap::getSnapToken($params);
@@ -121,38 +119,27 @@ class PaymentController extends Controller
         return response()->json([
             'success' => true,
             'snap_token' => $snapToken,
-            'total_harga' => $totalHarga
+            'total_harga' => $totalHarga,
         ]);
     }
 
-    /* ===================================================================
-     * 📌 FINISH PAGE
-     * =================================================================== */
     public function finish(Request $request)
     {
         $orderId = $request->order_id;
-
-        // Ambil ID dari format LP-12-173123123
         $id = explode('-', $orderId)[1];
-
         $transaction = Transaction::find($id);
 
         return view('payment.finish', compact('transaction'));
     }
 
-    /* ===================================================================
-     * 📌 CALLBACK MIDTRANS (AUTO UPDATE STATUS)
-     * =================================================================== */
     public function callback(Request $request)
     {
         $notif = $request->all();
-
         $orderId = $notif['order_id'];
         $status = $notif['transaction_status'];
         $paymentType = $notif['payment_type'];
         $fraud = $notif['fraud_status'] ?? null;
 
-        // Ambil ID transaksi dari format LP-12-xxxxx
         $id = explode('-', $orderId)[1];
         $transaction = Transaction::find($id);
 
@@ -172,7 +159,7 @@ class PaymentController extends Controller
             $transaction->status_pembayaran = 'success';
         } elseif ($status == 'pending') {
             $transaction->status_pembayaran = 'pending';
-        } elseif ($status == 'deny' || $status == 'cancel' || $status == 'expire') {
+        } elseif (in_array($status, ['deny', 'cancel', 'expire'])) {
             $transaction->status_pembayaran = 'failed';
         }
 

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -26,17 +26,17 @@ class AuthController extends Controller
 
         // Opsional: Membersihkan spasi untuk pencegahan bug login
         $credentials['username'] = trim($credentials['username']);
-        
+
         // 2. Coba Auth::attempt
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            
+
             // 3. Cek Role dan Pengarahan
             if (Auth::user()->role === 'admin') {
                 // Admin diarahkan ke rute yang bernama 'admin.dashboard'
                 return redirect()->intended(route('dashboard'))->with('success', 'Berhasil login sebagai Admin!');
             }
-            
+
             // Pengarahan default ke dashboard user
             return redirect()->intended(route('dashboard'))->with('success', 'Berhasil login!');
         }
@@ -80,13 +80,18 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         // PERBAIKAN: Arahkan ke halaman login, bukan dashboard.
-        return redirect()->route('login')->with('success', 'Berhasil logout.'); 
+        return redirect()->route('login')->with('success', 'Berhasil logout.');
     }
-    
+
     public function dashboard()
     {
         // Tampilkan view dashboard user biasa
-        return view('dashboard'); 
+        return view('dashboard');
+    }
+    public function profile()
+    {
+        return view('profile.index');
     }
 }

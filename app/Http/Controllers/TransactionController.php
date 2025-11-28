@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lapangan;
 use App\Models\Event;
+use App\Models\Lapangan;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,13 +17,13 @@ class TransactionController extends Controller
     public function checkoutLapangan($id, Request $request)
     {
         $lapangan = Lapangan::findOrFail($id);
-        
+
         // Get booking details from query params
         $tanggal = $request->query('tanggal');
         $start = $request->query('start');
         $end = $request->query('end');
         $durasi = $request->query('durasi');
-        
+
         return view('lapangan.checkout', compact('lapangan', 'tanggal', 'start', 'end', 'durasi'));
     }
 
@@ -33,6 +33,7 @@ class TransactionController extends Controller
     public function checkoutEvent($id)
     {
         $event = Event::findOrFail($id);
+
         return view('event.checkout', compact('event'));
     }
 
@@ -58,7 +59,7 @@ class TransactionController extends Controller
             DB::beginTransaction();
 
             // Generate Order ID
-            $orderId = 'TRX-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+            $orderId = 'TRX-'.date('Ymd').'-'.strtoupper(substr(uniqid(), -6));
 
             // Create transaction
             $transaction = Transaction::create([
@@ -98,7 +99,7 @@ class TransactionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Process Lapangan Error: ' . $e->getMessage());
+            Log::error('Process Lapangan Error: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -124,7 +125,7 @@ class TransactionController extends Controller
             DB::beginTransaction();
 
             // Generate Order ID
-            $orderId = 'TRX-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+            $orderId = 'TRX-'.date('Ymd').'-'.strtoupper(substr(uniqid(), -6));
 
             // Create transaction
             $transaction = Transaction::create([
@@ -161,7 +162,7 @@ class TransactionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Process Event Error: ' . $e->getMessage());
+            Log::error('Process Event Error: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -183,11 +184,11 @@ class TransactionController extends Controller
 
         // Prepare parameters
         if ($transaction->type === 'lapangan') {
-            $itemName = 'Booking ' . $item->nama . ' - ' . $transaction->booking_details['durasi_jam'] . ' Jam';
+            $itemName = 'Booking '.$item->nama.' - '.$transaction->booking_details['durasi_jam'].' Jam';
             $itemPrice = (int) $item->harga_per_jam;
             $itemQuantity = (int) $transaction->booking_details['durasi_jam'];
         } else {
-            $itemName = 'Pendaftaran ' . $item->nama_event;
+            $itemName = 'Pendaftaran '.$item->nama_event;
             $itemPrice = (int) $item->biaya_pendaftaran;
             $itemQuantity = 1;
         }
@@ -199,11 +200,11 @@ class TransactionController extends Controller
             ],
             'item_details' => [
                 [
-                    'id' => strtoupper($transaction->type) . '-' . $item->id,
+                    'id' => strtoupper($transaction->type).'-'.$item->id,
                     'price' => $itemPrice,
                     'quantity' => $itemQuantity,
                     'name' => $itemName,
-                ]
+                ],
             ],
             'customer_details' => [
                 'first_name' => $transaction->user_name,
@@ -214,7 +215,7 @@ class TransactionController extends Controller
 
         // Get Snap Token
         $snapToken = \Midtrans\Snap::getSnapToken($params);
-        
+
         return $snapToken;
     }
 
@@ -228,7 +229,7 @@ class TransactionController extends Controller
             \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
             \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
 
-            $notification = new \Midtrans\Notification();
+            $notification = new \Midtrans\Notification;
 
             $orderId = $notification->order_id;
             $transactionStatus = $notification->transaction_status;
@@ -243,7 +244,7 @@ class TransactionController extends Controller
             // Find transaction
             $transaction = Transaction::where('order_id', $orderId)->first();
 
-            if (!$transaction) {
+            if (! $transaction) {
                 return response()->json(['message' => 'Transaction not found'], 404);
             }
 
@@ -265,7 +266,8 @@ class TransactionController extends Controller
             return response()->json(['message' => 'OK']);
 
         } catch (\Exception $e) {
-            Log::error('Webhook Error: ' . $e->getMessage());
+            Log::error('Webhook Error: '.$e->getMessage());
+
             return response()->json(['message' => 'Error'], 500);
         }
     }
@@ -277,13 +279,13 @@ class TransactionController extends Controller
     {
         $orderId = $request->order_id;
 
-        if (!$orderId) {
+        if (! $orderId) {
             return redirect('/')->with('error', 'Order ID tidak ditemukan');
         }
 
         $transaction = Transaction::where('order_id', $orderId)->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             return redirect('/')->with('error', 'Transaksi tidak ditemukan');
         }
 
@@ -297,7 +299,7 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::findOrFail($id);
 
-        if (!in_array($transaction->status, ['pending'])) {
+        if (! in_array($transaction->status, ['pending'])) {
             return redirect()->back()->with('error', 'Transaksi tidak dapat dibatalkan');
         }
 
@@ -313,6 +315,7 @@ class TransactionController extends Controller
     public function show($id)
     {
         $transaction = Transaction::findOrFail($id);
+
         return view('transactions.show', compact('transaction'));
     }
 

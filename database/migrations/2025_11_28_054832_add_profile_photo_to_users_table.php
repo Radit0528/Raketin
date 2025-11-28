@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('lapangans', function (Blueprint $table) {
-            $table->text('fasilitas')->nullable()->after('deskripsi');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('profile_photo')->nullable();
         });
     }
-
+    
     public function down()
     {
-        Schema::table('lapangans', function (Blueprint $table) {
-            $table->dropColumn('fasilitas');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('profile_photo');
         });
     }
+    
 };

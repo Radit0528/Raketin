@@ -11,6 +11,7 @@ class EventController extends Controller
     public function index()
     {
         $events = Event::orderBy('tanggal_mulai', 'desc')->get();
+
         return view('event.index', compact('events'));
     }
 
@@ -18,6 +19,7 @@ class EventController extends Controller
     public function show($id)
     {
         $event = Event::findOrFail($id);
+
         return view('event.detail', compact('event'));
     }
 
@@ -27,12 +29,12 @@ class EventController extends Controller
 
         // Filter berdasarkan nama event
         if ($request->filled('nama_event')) {
-            $query->where('nama_event', 'like', '%' . $request->nama_event . '%');
+            $query->where('nama_event', 'like', '%'.$request->nama_event.'%');
         }
 
         // Filter berdasarkan lokasi (jika kolom lokasi ada di tabel event)
         if ($request->filled('lokasi')) {
-            $query->where('lokasi', 'like', '%' . $request->lokasi . '%');
+            $query->where('lokasi', 'like', '%'.$request->lokasi.'%');
         }
 
         // Filter berdasarkan tanggal mulai
@@ -57,6 +59,7 @@ class EventController extends Controller
     public function checkout($id)
     {
         $event = Event::findOrFail($id);
+
         return view('event.checkout', compact('event'));
     }
 }

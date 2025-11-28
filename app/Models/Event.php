@@ -13,6 +13,7 @@ class Event extends Model
 
     // Menentukan primary key jika namanya bukan 'id' (tapi di migrasi Anda sudah 'id')
     protected $primaryKey = 'id';
+
     protected $table = 'events';
 
     // Kolom yang dapat diisi melalui mass assignment (sesuai migrasi)
@@ -48,7 +49,7 @@ class Event extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class, 'item_id')
-                    ->where('tipe_transaksi', 'event');
+            ->where('tipe_transaksi', 'event');
     }
 
     /**

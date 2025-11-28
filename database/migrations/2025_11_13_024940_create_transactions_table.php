@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
 
             // Event
@@ -32,7 +32,7 @@ return new class extends Migration
             // Payment
             $table->integer('amount'); // total harga
             $table->enum('status_pembayaran', ['pending', 'success', 'failed', 'challenge'])
-                  ->default('pending');
+                ->default('pending');
 
             $table->timestamps();
 

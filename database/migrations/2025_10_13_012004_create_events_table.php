@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id(); // event_id (PK)
-            
+
             // Foreign Keys
             // $table->foreignId('court_id')->constrained('lapangans')->onDelete('cascade');
             // $table->foreignId('organizer_id')->constrained('users')->onDelete('cascade');
-            
+
             // Kolom Data Event
             $table->string('nama_event');
             $table->string('lokasi');
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer('biaya_pendaftaran')->default(0);
             $table->string('status')->default('upcoming'); // Contoh: upcoming, full, finished
             $table->string('gambar')->nullable();
-            
+
             $table->timestamps();
         });
     }

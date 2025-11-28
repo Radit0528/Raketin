@@ -5,12 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\LapanganController as AdminLapanganController;
-
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LapanganController;
 use App\Http\Controllers\EventController as PublicEventController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 
 use App\Http\Middleware\EnsureUserIsAdmin;
 
@@ -66,6 +66,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/payment/lapangan/{id}/checkout', [PaymentController::class, 'lapanganCheckout'])
         ->name('payment.lapangan.checkout');
+    
+    // Profile
+    Route::get('/profil', [ProfileController::class, 'profile'])->name('profile');
+    Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profil/update', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 
@@ -98,3 +103,4 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])
         Route::resource('lapangan', AdminLapanganController::class);
         Route::resource('event', AdminEventController::class);
     });
+?>

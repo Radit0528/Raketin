@@ -35,12 +35,12 @@ class Transaction extends Model
     // Check apakah transaksi ini event
     public function isEvent()
     {
-        return !is_null($this->event_id);
+        return ! is_null($this->event_id);
     }
 
     // Check apakah transaksi ini lapangan
     public function isLapangan()
     {
-        return !is_null($this->lapangan_id);
+        return ! is_null($this->lapangan_id);
     }
 }

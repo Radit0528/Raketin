@@ -14,22 +14,19 @@ return new class extends Migration
         Schema::table('events', function (Blueprint $table) {
             $table->unsignedBigInteger('lapangan_id')->nullable()->after('id');
             $table->foreign('lapangan_id')->references('id')->on('lapangans')->onDelete('set null');
-    
+
             // Ubah lokasi jadi nullable (tidak wajib)
             $table->string('lokasi')->nullable()->change();
         });
     }
-    
-    
+
     public function down()
     {
         Schema::table('events', function (Blueprint $table) {
             $table->dropForeign(['lapangan_id']);
             $table->dropColumn('lapangan_id');
-    
+
             $table->string('lokasi')->nullable(false)->change();
         });
     }
-    
-    
 };

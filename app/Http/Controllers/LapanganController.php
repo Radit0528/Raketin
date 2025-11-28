@@ -10,16 +10,16 @@ class LapanganController extends Controller
     public function index()
     {
         $lapangans = Lapangan::all();
+
         return view('lapangan.index', compact('lapangans'));
     }
 
     public function show($id)
     {
         $lapangan = Lapangan::findOrFail($id);
+
         return view('lapangan.detail', compact('lapangan'));
     }
-
-
 
     public function pilihWaktu($id, Request $request)
     {
@@ -35,7 +35,7 @@ class LapanganController extends Controller
 
         // Filter lokasi
         if ($request->filled('lokasi')) {
-            $query->where('lokasi', 'like', '%' . $request->lokasi . '%');
+            $query->where('lokasi', 'like', '%'.$request->lokasi.'%');
         }
 
         // Filter jenis olahraga
@@ -60,14 +60,14 @@ class LapanganController extends Controller
     public function checkout($id)
     {
         $lapangan = Lapangan::findOrFail($id);
+
         return view('lapangan.checkout', compact('lapangan'));
     }
 
     /**
      * Check availability of lapangan via AJAX
-     * 
-     * @param Request $request
-     * @param int $id
+     *
+     * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function checkAvailability(Request $request, $id)
@@ -90,7 +90,7 @@ class LapanganController extends Controller
             'available' => $isAvailable,
             'message' => $isAvailable
                 ? 'Lapangan tersedia pada waktu yang dipilih'
-                : 'Lapangan sudah dibooking pada waktu tersebut. Silakan pilih waktu lain.'
+                : 'Lapangan sudah dibooking pada waktu tersebut. Silakan pilih waktu lain.',
         ]);
     }
 }

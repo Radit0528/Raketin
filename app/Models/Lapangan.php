@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,9 +10,10 @@ class Lapangan extends Model
 {
     use HasFactory;
 
-    protected $table = 'lapangans'; 
+    protected $table = 'lapangans';
+
     protected $guarded = ['id'];
-    
+
     // Kolom yang dapat diisi
     protected $fillable = [
         'nama',
@@ -21,7 +21,7 @@ class Lapangan extends Model
         'deskripsi',
         'harga_per_jam',
         'fasilitas',
-        'gambar', 
+        'gambar',
     ];
 
     // Cast untuk tipe data
@@ -43,7 +43,7 @@ class Lapangan extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class, 'item_id')
-                    ->where('tipe_transaksi', 'lapangan');
+            ->where('tipe_transaksi', 'lapangan');
     }
 
     /**
@@ -72,10 +72,10 @@ class Lapangan extends Model
 
     /**
      * Check apakah lapangan tersedia pada waktu tertentu
-     * 
-     * @param string $tanggal
-     * @param string $jamMulai
-     * @param string $jamSelesai
+     *
+     * @param  string  $tanggal
+     * @param  string  $jamMulai
+     * @param  string  $jamSelesai
      * @return bool
      */
     public function isAvailable($tanggal, $jamMulai, $jamSelesai)

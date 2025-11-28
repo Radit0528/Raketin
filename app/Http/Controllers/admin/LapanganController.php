@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Lapangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 class LapanganController extends Controller
 {
@@ -14,6 +13,7 @@ class LapanganController extends Controller
     public function index()
     {
         $lapangans = Lapangan::orderBy('id', 'asc')->get();
+
         return view('admin.lapangan', compact('lapangans'));
     }
 
@@ -35,27 +35,25 @@ class LapanganController extends Controller
             'fasilitas.*' => 'string',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-    
+
         $data = $request->except('gambar');
-    
+
         // Convert array fasilitas menjadi string
         $data['fasilitas'] = $request->has('fasilitas')
             ? implode(', ', $request->fasilitas)
             : null;
-    
+
         // Upload gambar jika ada
         if ($request->hasFile('gambar')) {
             $path = $request->file('gambar')->store('lapangan_images', 'public');
-            $data['gambar'] = '/storage/' . $path;
+            $data['gambar'] = '/storage/'.$path;
         }
-    
+
         Lapangan::create($data);
-    
+
         return redirect()->route('lapangan.index')
             ->with('success', 'Lapangan berhasil ditambahkan!');
     }
-    
-    
 
     // [U]PDATE: Menampilkan form edit
     public function edit(Lapangan $lapangan)
@@ -74,24 +72,23 @@ class LapanganController extends Controller
             'fasilitas' => 'nullable|string',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-    
+
         $data = $request->except('gambar');
-    
+
         if ($request->hasFile('gambar')) {
             if ($lapangan->gambar) {
                 $oldPath = str_replace('/storage/', 'public/', $lapangan->gambar);
                 Storage::delete($oldPath);
             }
-    
+
             $path = $request->file('gambar')->store('lapangan_images', 'public');
-            $data['gambar'] = '/storage/' . $path;
+            $data['gambar'] = '/storage/'.$path;
         }
-    
+
         $lapangan->update($data);
-    
+
         return redirect()->route('lapangan.index')->with('success', 'Lapangan berhasil diperbarui!');
     }
-    
 
     // [D]ELETE: Menghapus lapangan
     public function destroy(Lapangan $lapangan)
@@ -106,6 +103,4 @@ class LapanganController extends Controller
 
         return redirect()->route('lapangan.index')->with('success', 'Lapangan berhasil dihapus!');
     }
-
-    
 }

@@ -15,6 +15,7 @@ class EventController extends Controller
     public function index()
     {
         $events = Event::with('lapangan')->orderBy('tanggal_mulai', 'desc')->get();
+
         return view('admin.event', compact('events'));
     }
 
@@ -22,6 +23,7 @@ class EventController extends Controller
     public function create()
     {
         $lapangans = Lapangan::all();
+
         return view('admin.event.create', compact('lapangans'));
     }
 
@@ -51,7 +53,7 @@ class EventController extends Controller
 
         if ($request->hasFile('gambar')) {
             $path = $request->file('gambar')->store('event_images', 'public');
-            $data['gambar'] = '/storage/' . $path;
+            $data['gambar'] = '/storage/'.$path;
         }
 
         Event::create($data);
@@ -63,6 +65,7 @@ class EventController extends Controller
     public function edit(Event $event)
     {
         $lapangans = Lapangan::all();
+
         return view('admin.event.edit', compact('event', 'lapangans'));
     }
 
@@ -97,7 +100,7 @@ class EventController extends Controller
             }
 
             $path = $request->file('gambar')->store('event_images', 'public');
-            $data['gambar'] = '/storage/' . $path;
+            $data['gambar'] = '/storage/'.$path;
         }
 
         $event->update($data);
@@ -122,6 +125,7 @@ class EventController extends Controller
     public function show(Event $event)
     {
         $event->load('lapangan'); // Ambil data lapangan juga
+
         return view('admin.event.show', compact('event'));
     }
 }
