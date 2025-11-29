@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pilih Waktu - Raketin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body class="bg-[#E9F0FB]">
@@ -76,16 +78,21 @@
         </div>
     </div>
 
-    <script>
-        // Ambil tanggal dari backend
-        const tanggalDipilih = "{{ $tanggalDipilih }}"; // dari Laravel
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        // ✅ Parse tanggal dengan benar menggunakan local timezone
+    <script>
+        // Status login dari backend
+        const isLoggedIn = "{{ auth()->check() }}" === "1";
+
+        // Ambil tanggal dari backend
+        const tanggalDipilih = "{{ $tanggalDipilih }}";
+
+        // Parse tanggal dengan benar menggunakan local timezone
         const [year, month, day] = tanggalDipilih.split('-').map(Number);
         const selectedDate = new Date(year, month - 1, day);
 
         const hargaPerJam = "{{ $lapangan->harga_per_jam }}";
-
 
         const monthYearEl = document.getElementById("monthYear");
         const calendarDaysEl = document.getElementById("calendarDays");
@@ -142,7 +149,6 @@
                 calendarDaysEl.appendChild(btn);
             }
 
-            // ✅ Format tanggal dengan benar untuk display
             selectedDateEl.textContent = selectedDate.toLocaleDateString("id-ID", {
                 day: "numeric",
                 month: "long",
@@ -162,11 +168,9 @@
                 btn.addEventListener("click", () => {
                     const index = selectedSlots.indexOf(time);
                     if (index > -1) {
-                        // Hapus dari pilihan
                         selectedSlots.splice(index, 1);
                         btn.classList.remove("bg-blue-600", "text-white", "font-semibold");
                     } else {
-                        // Tambahkan ke pilihan
                         selectedSlots.push(time);
                         selectedSlots.sort();
                         btn.classList.add("bg-blue-600", "text-white", "font-semibold");
@@ -192,13 +196,44 @@
             totalPriceEl.textContent = (selectedSlots.length * hargaPerJam).toLocaleString("id-ID");
         }
 
+        // ✅ Fungsi untuk menampilkan alert login
+        function showLoginAlert() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Login Diperlukan',
+                text: 'Anda harus login terlebih dahulu untuk melakukan booking.',
+                showCancelButton: true,
+                confirmButtonText: 'Login Sekarang',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#6b7280'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const currentUrl = window.location.href;
+                    window.location.href = "{{ route('login') }}?redirect=" + encodeURIComponent(currentUrl);
+                }
+            });
+        }
+
+        // ✅ Event listener untuk tombol Continue dengan auth check
         document.getElementById('continueBtn').addEventListener('click', () => {
             if (selectedSlots.length === 0) {
-                alert("Pilih minimal 1 jam bermain!");
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Pilih Waktu',
+                    text: 'Pilih minimal 1 jam bermain!',
+                    confirmButtonColor: '#2563eb'
+                });
                 return;
             }
 
-            const date = selectedDateEl.textContent;
+            // ✅ Cek apakah user sudah login
+            if (!isLoggedIn) {
+                showLoginAlert();
+                return;
+            }
+
+            // Jika sudah login, lanjutkan ke checkout
             const start = selectedSlots[0];
             const end = slotTimes[slotTimes.indexOf(selectedSlots[selectedSlots.length - 1]) + 1];
             const duration = selectedSlots.length;
@@ -208,7 +243,6 @@
 
             window.location.href = url;
         });
-
 
         renderCalendar();
     </script>

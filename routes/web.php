@@ -103,4 +103,3 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])
         Route::resource('lapangan', AdminLapanganController::class);
         Route::resource('event', AdminEventController::class);
     });
-?>

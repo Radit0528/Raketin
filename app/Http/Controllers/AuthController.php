@@ -18,30 +18,38 @@ class AuthController extends Controller
     // Proses login
     public function login(Request $request)
     {
-        // 1. WAJIB: Validasi dan Definisi $credentials
+        // 1. Validasi credentials
         $credentials = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        // Opsional: Membersihkan spasi untuk pencegahan bug login
         $credentials['username'] = trim($credentials['username']);
 
         // 2. Coba Auth::attempt
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // 3. Cek Role dan Pengarahan
-            if (Auth::user()->role === 'admin') {
-                // Admin diarahkan ke rute yang bernama 'admin.dashboard'
-                return redirect()->intended(route('dashboard'))->with('success', 'Berhasil login sebagai Admin!');
+            // 3. ✅ Cek jika ada redirect URL dari query parameter
+            $redirectUrl = $request->query('redirect');
+            
+            if ($redirectUrl) {
+                // Dekode URL dan redirect ke halaman yang dimaksud
+                return redirect($redirectUrl)->with('success', 'Berhasil login!');
             }
 
-            // Pengarahan default ke dashboard user
-            return redirect()->intended(route('dashboard'))->with('success', 'Berhasil login!');
+            // 4. Cek Role dan Pengarahan default
+            if (Auth::user()->role === 'admin') {
+                return redirect()->intended(route('admin.dashboard'))
+                    ->with('success', 'Berhasil login sebagai Admin!');
+            }
+
+            // Default redirect untuk user biasa
+            return redirect()->intended(route('dashboard'))
+                ->with('success', 'Berhasil login!');
         }
 
-        // 4. Pengarahan saat Gagal
+        // 5. Gagal login
         return back()->withErrors([
             'username' => 'Username atau password salah.',
         ])->onlyInput('username');
@@ -68,7 +76,7 @@ class AuthController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user', // Default role 'user' saat register
+            'role' => 'user',
         ]);
 
         return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login.');
@@ -81,17 +89,12 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // PERBAIKAN: Arahkan ke halaman login, bukan dashboard.
         return redirect()->route('login')->with('success', 'Berhasil logout.');
     }
 
+    // Dashboard user
     public function dashboard()
     {
-        // Tampilkan view dashboard user biasa
         return view('dashboard');
-    }
-    public function profile()
-    {
-        return view('profile.index');
     }
 }

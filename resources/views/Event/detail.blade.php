@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('head')
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+@endsection
+
 @section('content')
 <div class="container my-5">
     {{-- Banner / Gambar Event --}}
@@ -11,7 +16,6 @@
                 class="w-[150%] max-w-md object-contain rounded-lg shadow-md">
         </div>
     </div>
-
     @endif
 
     {{-- Judul Event --}}
@@ -26,7 +30,7 @@
             <h5 class="mt-4">Lokasi</h5>
             <p>{{ $event->lokasi }}</p>
 
-            {{-- Contoh embed map, bisa disimpan di DB juga kalau mau --}}
+            {{-- Contoh embed map --}}
             <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm">
                 <iframe
                     src="https://www.google.com/maps?q={{ urlencode($event->lokasi) }}&output=embed"
@@ -49,13 +53,47 @@
                             {{ ucfirst($event->status) }}
                         </span>
                     </p>
-                    <a href="{{ route('event.checkout', $event->id) }}" class="btn btn-primary w-100 mt-3">
-                        Daftar Event
-                    </a>
+
+                    {{-- ✅ Tombol dengan Auth Check --}}
+                    @auth
+                        <a href="{{ route('event.checkout', $event->id) }}" class="btn btn-primary w-100 mt-3">
+                            Daftar Event
+                        </a>
+                    @else
+                        <button onclick="showLoginAlertEvent()" class="btn btn-primary w-100 mt-3">
+                            Daftar Event
+                        </button>
+                    @endauth
 
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function showLoginAlertEvent() {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Login Diperlukan',
+        text: 'Anda harus login terlebih dahulu untuk mendaftar event.',
+        showCancelButton: true,
+        confirmButtonText: 'Login Sekarang',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#6c757d'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirect ke login dengan URL tujuan setelah login
+            const checkoutUrl = "{{ route('event.checkout', $event->id) }}";
+            window.location.href = "{{ route('login') }}?redirect=" + encodeURIComponent(checkoutUrl);
+        }
+    });
+}
+</script>
 @endsection
