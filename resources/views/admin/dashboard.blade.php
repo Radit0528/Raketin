@@ -1,131 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="Dashboard Admin Raketin" />
-        <meta name="author" content="Raketin" />
-        
-        {{-- SLOT 1: TITLE DINAMIS --}}
-        <title>Raketin Admin - @yield('title', 'Dashboard')</title>
+@extends('layouts.admin') 
+{{-- Ganti sesuai layout-mu --}}
 
-        {{-- ASSET CSS (PERBAIKI PATH DENGAN asset('sb-admin-assets/...') --}}
-        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-        <link href="{{ asset('assets/admin/css/styles.css') }}" rel="stylesheet" />
-        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-        @yield('styles')
-    </head>
-    <body class="sb-nav-fixed">
-        
-        {{-- TOP NAVIGATION BAR (NAVBAR) --}}
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <a class="navbar-brand ps-3" href="{{ route('admin.dashboard') }}">RAKETIN Admin</a>
-            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            
-            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0"></form>
-            
-            {{-- USER DROPDOWN (LOGOUT) --}}
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><div class="dropdown-item small">Logged in as: <strong>{{ Auth::user()->username ?? 'Admin' }}</strong></div></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="dropdown-item">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-        
-        <div id="layoutSidenav">
-            
-            {{-- SIDEBAR (DISESUAIKAN DENGAN KEBUTUHAN RAKETIN) --}}
-            <div id="layoutSidenav_nav">
-                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                    <div class="sb-sidenav-menu">
-                        <div class="nav">
-                            
-                            <div class="sb-sidenav-menu-heading">Utama</div>
-                            <a class="nav-link" href="{{ route('dashboard') }}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Dashboard
-                            </a>
-                            
-                            <div class="sb-sidenav-menu-heading">Pengelolaan Data</div>
-                            
-                            {{-- TAUTAN LAPANGAN --}}
-                            <a class="nav-link" href="{{ route('lapangan.index') }}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-basketball-ball"></i></div>
-                                Daftar Lapangan
-                            </a>
-                            <a class="nav-link" href="{{ route('lapangan.create') }}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-plus"></i></div>
-                                Tambah Lapangan
-                            </a>
-                            
-                            {{-- TAUTAN EVENT --}}
-                            <a class="nav-link" href="{{ route('event.index') }}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
-                                Daftar Event
-                            </a>
-                            <a class="nav-link" href="{{ route('event.create') }}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-plus"></i></div>
-                                Tambah Event
-                            </a>
-                            
-                        </div>
-                    </div>
-                    <div class="sb-sidenav-footer">
-                        <div class="small">Logged in as:</div>
-                        {{ Auth::user()->username ?? 'Admin' }}
-                    </div>
-                </nav>
-            </div>
-            
-            {{-- KONTEN UTAMA (AREA DINAMIS) --}}
-            <div id="layoutSidenav_content">
-                <main>
-                    <div class="container-fluid px-4">
-                        {{-- Judul dan Breadcrumb Dinamis --}}
-                        <h1 class="mt-4">@yield('title_page', 'Dashboard')</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">@yield('breadcrumb', 'Overview')</li>
-                        </ol>
-                        
-                        {{-- SLOT 2: KONTEN UTAMA HALAMAN --}}
-                        @yield('content')
-                        
-                    </div>
-                </main>
-                
-                {{-- FOOTER --}}
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid px-4">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Raketin {{ date('Y') }}</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+@section('title', 'Dashboard')
+
+@section('content')
+<div class="p-6">
+
+    {{-- Judul --}}
+    <h1 class="text-3xl font-bold mb-2">Dashboard</h1>
+    <p class="text-gray-500 mb-6">Overview</p>
+
+    {{-- Statistik Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+        <div class="bg-white rounded-xl p-5 shadow">
+            <p class="text-sm text-gray-500">Total Lapangan</p>
+            <h2 class="text-3xl font-bold">{{ $totalLapangan ?? 0 }}</h2>
         </div>
-        
-        {{-- ASSET JAVASCRIPT (PERBAIKI PATH) --}}
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="{{ asset('assets/admin/js/scripts.js') }}"></script>
-        
-        {{-- Hapus semua Chart.js dan DataTables bawaan SB Admin agar lebih minimalis --}}
-        
-        @yield('scripts')
-    </body>
-</html>
+
+        <div class="bg-white rounded-xl p-5 shadow">
+            <p class="text-sm text-gray-500">Total Event</p>
+            <h2 class="text-3xl font-bold">{{ $totalEvent ?? 0 }}</h2>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 shadow">
+            <p class="text-sm text-gray-500">User Terdaftar</p>
+            <h2 class="text-3xl font-bold">{{ $totalUser ?? 0 }}</h2>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 shadow">
+            <p class="text-sm text-gray-500">Booking Hari Ini</p>
+            <h2 class="text-3xl font-bold">{{ $bookingToday ?? 0 }}</h2>
+        </div>
+    </div>
+
+    {{-- Grafik Placeholder --}}
+    <div class="bg-white rounded-xl shadow p-6 mb-8">
+        <h3 class="text-xl font-semibold mb-4">Grafik Booking Mingguan</h3>
+        <div class="w-full h-56 bg-gray-100 rounded flex items-center justify-center text-gray-400">
+            Grafik akan muncul di sini
+        </div>
+    </div>
+
+    {{-- Aktivitas Terbaru & Jadwal Hari Ini --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {{-- Aktivitas --}}
+        <div class="bg-white rounded-xl shadow p-6">
+            <h3 class="text-xl font-semibold mb-4">Aktivitas Terbaru</h3>
+
+            <ul class="space-y-3">
+                @forelse ($activities ?? [] as $activity)
+                    <li class="text-gray-700">
+                        • {{ $activity }}
+                    </li>
+                @empty
+                    <li class="text-gray-400">Belum ada aktivitas terbaru</li>
+                @endforelse
+            </ul>
+        </div>
+
+        {{-- Jadwal Hari Ini --}}
+        <div class="bg-white rounded-xl shadow p-6">
+            <h3 class="text-xl font-semibold mb-4">Jadwal Hari Ini</h3>
+
+            @forelse ($jadwalHariIni ?? [] as $j)
+                <div class="border-l-4 border-blue-500 pl-3 mb-3">
+                    <p class="font-semibold">{{ $j['lapangan'] }}</p>
+                    <p class="text-sm text-gray-500">{{ $j['waktu'] }}</p>
+                </div>
+            @empty
+                <p class="text-gray-400">Tidak ada jadwal hari ini</p>
+            @endforelse
+        </div>
+
+    </div>
+
+</div>
+@endsection

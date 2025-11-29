@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cari Event - Raketin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-[#F7FAFC] text-gray-800">
@@ -42,14 +43,6 @@
                     </button>
                 </div>
             </form>
-        </div>
-
-        <!-- Toggle List/Grid -->
-        <div class="flex justify-end mb-6">
-            <div class="bg-gray-100 rounded-lg p-1 flex space-x-1">
-                <button class="bg-blue-600 text-white px-4 py-1 rounded-md text-sm font-semibold">List</button>
-                <button class="px-4 py-1 rounded-md text-sm font-semibold text-gray-700 hover:bg-gray-200">Grid</button>
-            </div>
         </div>
         <!-- Button Tambah Event -->
         <div class="mb-6">
