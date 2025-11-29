@@ -13,10 +13,12 @@
 
     <div class="container mx-auto px-6 py-12">
         <!-- Judul -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold mb-2">Cari Lapangan</h1>
-            <p class="text-gray-500">Cari lapangan berdasarkan lokasi, tanggal, waktu, dan fasilitas.</p>
-        </div>
+        <section class="bg-gradient-to-b from-blue-900 to-blue-600 text-white py-16 text-center">
+            <div class="container mx-auto px-6">
+                <h1 class="text-3xl font-bold mb-2">Cari Lapangan</h1>
+                <p class="text-lg mb-8">Cari lapangan berdasarkan lokasi, tanggal, waktu, dan fasilitas.</p>
+            </div>
+        </section>
 
         <!-- Form Filter -->
         <div class="bg-white rounded-2xl shadow-sm p-6 mb-10 border border-gray-100">

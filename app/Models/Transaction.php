@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaction extends Model
 {
@@ -20,27 +21,51 @@ class Transaction extends Model
         'status_pembayaran',
     ];
 
-    // Relasi ke Event
-    public function event()
+    /**
+     * Relasi ke Event
+     */
+    public function event(): BelongsTo
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsTo(Event::class, 'event_id');
     }
 
-    // Relasi ke Lapangan
-    public function lapangan()
+    /**
+     * Relasi ke Lapangan
+     */
+    public function lapangan(): BelongsTo
     {
-        return $this->belongsTo(Lapangan::class);
+        return $this->belongsTo(Lapangan::class, 'lapangan_id');
     }
 
-    // Check apakah transaksi ini event
-    public function isEvent()
+    /**
+     * Cek apakah transaksi berkaitan dengan Event
+     */
+    public function isEvent(): bool
     {
-        return ! is_null($this->event_id);
+        return !is_null($this->event_id);
     }
 
-    // Check apakah transaksi ini lapangan
-    public function isLapangan()
+    /**
+     * Cek apakah transaksi berkaitan dengan Lapangan
+     */
+    public function isLapangan(): bool
     {
-        return ! is_null($this->lapangan_id);
+        return !is_null($this->lapangan_id);
+    }
+
+    /**
+     * Scope: Upcoming berdasarkan tanggal
+     */
+    public function scopeUpcoming($query)
+    {
+        return $query->whereDate('tanggal', '>=', now()->toDateString());
+    }
+
+    /**
+     * Scope: History berdasarkan tanggal
+     */
+    public function scopeHistory($query)
+    {
+        return $query->whereDate('tanggal', '<', now()->toDateString());
     }
 }
