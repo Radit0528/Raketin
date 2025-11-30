@@ -1,31 +1,27 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detail Lapangan - Raketin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
+@section('styles')
+{{-- Menimpa body class default --}}
+<style>
+    body {
+        background-color: #E9F0FB;
+    }
+</style>
+{{-- Link CSS yang dibutuhkan (sudah ada di original) --}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+@endsection
 
-<body class="bg-[#E9F0FB]">
-    @include('layouts.navbar')
-
-    <!-- Breadcrumb -->
+@section('content')
     <div class="container mx-auto px-6 py-6 text-sm text-gray-500">
         <a href="/" class="hover:text-blue-600">Home</a> /
         <a href="{{ route('lapangan.index') }}" class="hover:text-blue-600">Lapangan</a> /
         <span class="text-gray-800 font-medium">{{ $lapangan->nama }}</span>
     </div>
 
-    <!-- Detail Lapangan -->
     <section class="container mx-auto px-6 pb-12">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            <!-- Gambar & Deskripsi -->
             <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-6">
                 <div class="grid grid-cols-3 gap-2 mb-6">
                     <div class="col-span-3">
@@ -79,7 +75,6 @@
                 </div>
         </div>
 
-            <!-- Sidebar Harga & Kalender -->
             <div class="bg-white shadow-md rounded-xl p-6 h-fit">
                 <h3 class="text-sm text-gray-500 mb-1">Harga</h3>
                 <p class="text-2xl font-bold text-blue-600 mb-4">
@@ -90,7 +85,6 @@
                 <h3 class="text-sm text-gray-500 mb-2">Ketersediaan</h3>
 
                 <div class="border rounded-lg p-4 bg-gray-50">
-                    <!-- Header Bulan -->
                     <div class="flex justify-between items-center mb-4">
                         <button id="prevMonth"
                             class="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold">
@@ -105,7 +99,6 @@
                         </button>
                     </div>
 
-                    <!-- Nama Hari -->
                     <div class="grid grid-cols-7 gap-1 text-center text-sm text-gray-600 font-medium mb-2">
                         <span>M</span>
                         <span>S</span>
@@ -116,7 +109,6 @@
                         <span>S</span>
                     </div>
 
-                    <!-- Tanggal -->
                     <div id="calendar" class="grid grid-cols-7 gap-1 text-center text-sm text-gray-700"></div>
                 </div>
 
@@ -130,7 +122,9 @@
             </div>
         </div>
     </section>
+@endsection
 
+@section('scripts')
     <script>
         const calendarEl = document.getElementById("calendar");
         const monthYearEl = document.getElementById("monthYear");
@@ -215,7 +209,4 @@
 
         renderCalendar(currentDate);
     </script>
-
-</body>
-
-</html>
+@endsection

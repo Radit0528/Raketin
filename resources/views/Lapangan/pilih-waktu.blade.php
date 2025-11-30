@@ -1,20 +1,16 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pilih Waktu - Raketin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-</head>
+@section('styles')
+{{-- Menimpa body class default --}}
+<style>
+    body {
+        background-color: #E9F0FB;
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+@endsection
 
-<body class="bg-[#E9F0FB]">
-    @include('layouts.navbar')
-
-    <!-- Breadcrumb -->
+@section('content')
     <div class="container mx-auto px-6 py-6 text-sm text-gray-500">
         <a href="/" class="hover:text-blue-600">Home</a> /
         <a href="{{ route('lapangan.index') }}" class="hover:text-blue-600">Lapangan</a> /
@@ -27,16 +23,13 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-            <!-- Kalender & Slot -->
             <div class="bg-white p-6 rounded-xl shadow-md md:col-span-2">
-                <!-- Navigasi Bulan (disable karena tanggal dikunci) -->
                 <div class="flex justify-between items-center mb-4">
                     <button id="prevMonth" class="p-2 text-gray-400 cursor-not-allowed" disabled>&lt;</button>
                     <h3 id="monthYear" class="text-lg font-semibold text-gray-800"></h3>
                     <button id="nextMonth" class="p-2 text-gray-400 cursor-not-allowed" disabled>&gt;</button>
                 </div>
 
-                <!-- Nama Hari -->
                 <div class="grid grid-cols-7 gap-2 text-center text-sm text-gray-600 font-medium mb-2">
                     <div>M</div>
                     <div>S</div>
@@ -47,15 +40,12 @@
                     <div>S</div>
                 </div>
 
-                <!-- Kalender -->
                 <div id="calendarDays" class="grid grid-cols-7 gap-2 text-center text-sm mb-6"></div>
 
-                <!-- Slot Waktu -->
                 <h3 class="text-lg font-semibold text-gray-800 mb-3">Pilih Jam Bermain</h3>
                 <div id="slotsContainer" class="grid grid-cols-3 gap-2 text-center text-sm"></div>
             </div>
 
-            <!-- Summary -->
             <div class="bg-white p-6 rounded-xl shadow-md">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Summary</h3>
                 <div class="text-gray-600 text-sm mb-2">
@@ -78,8 +68,9 @@
 
         </div>
     </div>
+@endsection
 
-    <!-- SweetAlert2 JS -->
+@section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
@@ -247,6 +238,4 @@
 
         renderCalendar();
     </script>
-</body>
-
-</html>
+@endsection

@@ -1,25 +1,21 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Beranda - Raketin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-</head>
+@section('styles')
+{{-- Menimpa body class default agar bisa menggunakan custom background --}}
+<style>
+    body {
+        background-color: #E9F0FB;
+    }
+</style>
+@endsection
 
-<body class="bg-[#E9F0FB]">
-    @include('layouts.navbar')
+@section('content')
 
-    <!-- Hero Section -->
     <section class="bg-gradient-to-b from-blue-900 to-blue-600 text-white py-16 text-center">
         <div class="container mx-auto px-6">
             <h1 class="text-4xl font-bold mb-4">Temukan Lapangan Sempurna Anda</h1>
             <p class="text-lg mb-8">Temukan dan pesan lapangan badminton terdekat di sekitar Anda. Ikuti event dan terhubung dengan sesama pemain.</p>
 
-            <!-- Search Bar -->
             <div class="flex justify-center">
                 {{-- Form Pencarian harus mengarah ke route('search') --}}
                 <form action="" method="GET" class="flex w-1/2 max-w-xl">
@@ -35,7 +31,6 @@
         </div>
     </section>
 
-    <!-- Lapangan Terdekat (Dinamis dari Database) -->
     <section class="py-12">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center mb-6">
@@ -43,7 +38,6 @@
                 <a href="" class="text-blue-600 hover:underline">Lihat Semua</a>
             </div>
 
-            <!-- Area Lapangan Dinamis -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 @forelse ($lapangans as $lapangan)
                 <a href="{{ route('lapangan.detail', $lapangan->id) }}" class="block bg-white rounded-xl shadow-lg overflow-hidden transition transform hover:scale-[1.03] hover:shadow-2xl duration-300">
@@ -65,7 +59,6 @@
         </div>
     </section>
 
-    <!-- Event Mendatang (Dinamis dari Database) -->
     <section class="py-12 bg-white">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center mb-6">
@@ -110,6 +103,4 @@
         </div>
     </section>
 
-</body>
-
-</html>
+@endsection

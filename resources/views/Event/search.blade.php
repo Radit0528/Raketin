@@ -1,18 +1,20 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cari Event - Raketin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-</head>
-<body class="bg-[#F7FAFC] text-gray-800">
-    @include('layouts.navbar')
+@extends('layouts.app')
 
+@section('title', 'Event')
+
+@section('styles')
+{{-- Menimpa body class default --}}
+<style>
+    body {
+        background-color: #F7FAFC;
+    }
+</style>
+{{-- Memanggil font awesome yang dibutuhkan --}}
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+@endsection
+
+@section('content')
     <div class="container mx-auto px-6 py-12">
-        <!-- Judul -->
         <section class="bg-gradient-to-b from-blue-900 to-blue-600 text-white py-16 text-center">
             <div class="container mx-auto px-6">
                 <h1 class="text-3xl font-bold mb-2">Cari Event</h1>
@@ -20,7 +22,6 @@
             </div>
         </section>
 
-        <!-- Form Filter -->
         <div class="bg-white rounded-2xl shadow-sm p-6 mb-10 border border-gray-100">
             <form action="{{ route('event.search') }}" method="GET" class="space-y-4">
                 <div class="flex flex-col md:flex-row gap-4 items-center">
@@ -46,7 +47,6 @@
                 </div>
             </form>
         </div>
-        <!-- Button Tambah Event -->
         <div class="mb-6">
             <a href="https://wa.me/6282136934003?text=Halo%20admin,%20saya%20ingin%20menambah%20atau%20membuat%20event%20di%20platform%20Raketin."
             target="_blank"
@@ -58,7 +58,6 @@
         </div>
 
 
-        <!-- Hasil Pencarian -->
         <h2 class="text-lg font-bold mb-4">Daftar Event</h2>
 
         <div class="space-y-4">
@@ -88,5 +87,4 @@
             @endif
         </div>
     </div>
-</body>
-</html>
+@endsection

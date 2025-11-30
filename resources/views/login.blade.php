@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Raketin</title>
-  <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+@section('styles')
+{{-- Menimpa body class default --}}
+<style>
+    body {
+        background-color: #E9F0FB;
+    }
+</style>
+@endsection
 
-<body class="bg-[#E9F0FB]">
-
-  <!-- Navbar -->
-  @include('layouts.navbar')
-  <!-- Login Form -->
+@section('content')
   <div class="flex justify-center items-center min-h-[80vh]">
     <div class="bg-white p-8 rounded-xl shadow-md w-[350px]">
       <h2 class="text-2xl font-bold text-center text-gray-800">Masuk ke Akun Anda</h2>
@@ -37,7 +33,4 @@
       </p>
     </div>
   </div>
-
-</body>
-
-</html>
+@endsection
