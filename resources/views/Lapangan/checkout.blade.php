@@ -1,19 +1,73 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@section('title', 'Checkout Lapangan - ' . $lapangan->nama)
+
+@section('styles')
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Checkout Lapangan - {{ $lapangan->nama }}</title>
-    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+@endsection
+
+@section('scripts')
+    {{-- Memuat Midtrans Snap --}}
     <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key="{{ config('midtrans.client_key') }}"></script>
-</head>
+    {{-- Memuat script khusus checkout --}}
+    <script>
+        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-<body>
+            const button = document.getElementById('payButton');
 
+            button.disabled = true;
+            button.textContent = 'Memproses...';
+
+            try {
+                const formData = new FormData(this);
+                const response = await fetch("{{ route('payment.lapangan.checkout', $lapangan->id) }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // 🔵 Trigger Snap popup
+                    snap.pay(result.snap_token, {
+                        onSuccess: function(result) {
+                            window.location.href = "{{ route('payment.finish') }}?order_id=" + result.order_id;
+                        },
+                        onPending: function(result) {
+                            window.location.href = "{{ route('payment.finish') }}?order_id=" + result.order_id;
+                        },
+                        onError: function(result) {
+                            alert('Pembayaran gagal!');
+                            button.disabled = false;
+                            button.textContent = 'Bayar Sekarang';
+                        },
+                        onClose: function() {
+                            button.disabled = false;
+                            button.textContent = 'Bayar Sekarang';
+                        }
+                    });
+                } else {
+                    alert('Error: ' + result.message);
+                    button.disabled = false;
+                    button.textContent = 'Bayar Sekarang';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan!');
+                button.disabled = false;
+                button.textContent = 'Bayar Sekarang';
+            }
+        });
+    </script>
+@endsection
+
+@section('content')
     @php
     $tanggal = request('tanggal');
     $start = request('start');
@@ -29,12 +83,8 @@
                         <h4>Checkout Lapangan</h4>
                     </div>
                     <div class="card-body">
-                        <!-- Detail Lapangan -->
                         <div class="mb-4">
                             <h5>Detail Lapangan</h5>
-                            <!-- @if($lapangan->gambar)
-                                <img src="{{ asset('storage/' . $lapangan->gambar) }}" class="img-fluid mb-3" alt="{{ $lapangan->nama }}">
-                            @endif -->
                             <table class="table">
                                 <tr>
                                     <th width="200">Nama Lapangan</th>
@@ -51,7 +101,6 @@
                             </table>
                         </div>
 
-                        <!-- Form Booking -->
                         <form id="checkoutForm">
                             @csrf
                             <h5 class="mb-3">Data Pemesan</h5>
@@ -117,64 +166,4 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const button = document.getElementById('payButton');
-
-            button.disabled = true;
-            button.textContent = 'Memproses...';
-
-            try {
-                const formData = new FormData(this);
-                const response = await fetch("{{ route('payment.lapangan.checkout', $lapangan->id) }}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json',
-                    },
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    // 🔵 Trigger Snap popup
-                    snap.pay(result.snap_token, {
-                        onSuccess: function(result) {
-                            window.location.href = "{{ route('payment.finish') }}?order_id=" + result.order_id;
-                        },
-                        onPending: function(result) {
-                            window.location.href = "{{ route('payment.finish') }}?order_id=" + result.order_id;
-                        },
-                        onError: function(result) {
-                            alert('Pembayaran gagal!');
-                            button.disabled = false;
-                            button.textContent = 'Bayar Sekarang';
-                        },
-                        onClose: function() {
-                            button.disabled = false;
-                            button.textContent = 'Bayar Sekarang';
-                        }
-                    });
-                } else {
-                    alert('Error: ' + result.message);
-                    button.disabled = false;
-                    button.textContent = 'Bayar Sekarang';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan!');
-                button.disabled = false;
-                button.textContent = 'Bayar Sekarang';
-            }
-        });
-    </script>
-
-</body>
-
-</html>
+@endsection
