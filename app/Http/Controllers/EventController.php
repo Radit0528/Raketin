@@ -36,16 +36,6 @@ class EventController extends Controller
             });
         }
 
-        //     // Filter berdasarkan nama event
-        //     if ($request->filled('nama_event')) {
-        //         $query->where('nama_event', 'like', '%'.$request->nama_event.'%');
-        //     }
-
-        //    // Filter lokasi
-        //     if ($request->filled('lokasi')) {
-        //         $query->where('lokasi', 'like', '%'.$request->lokasi.'%');
-        //     }
-
         // Filter berdasarkan tanggal mulai
         if ($request->filled('tanggal_mulai')) {
             $query->whereDate('tanggal_mulai', $request->tanggal_mulai);

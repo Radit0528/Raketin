@@ -33,18 +33,18 @@ class LapanganController extends Controller
     {
         $query = Lapangan::query();
 
-         if ($request->filled('keyword')) {
-        $keyword = $request->keyword;
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
 
-        $query->where(function ($q) use ($keyword) {
-            $q->where('nama', 'like', "%{$keyword}%")
-              ->orWhere('lokasi', 'like', "%{$keyword}%");
-        });
-    }
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nama', 'like', "%{$keyword}%")
+                    ->orWhere('lokasi', 'like', "%{$keyword}%");
+            });
+        }
 
         // Filter lokasi
         if ($request->filled('lokasi')) {
-            $query->where('lokasi', 'like', '%'.$request->lokasi.'%');
+            $query->where('lokasi', 'like', '%' . $request->lokasi . '%');
         }
 
         // Ambil hasil
