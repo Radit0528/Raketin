@@ -19,7 +19,7 @@
         <section class="bg-gradient-to-b from-blue-900 to-blue-600 text-white py-16 text-center">
             <div class="container mx-auto px-6">
                 <h1 class="text-3xl font-bold mb-2">Cari Lapangan</h1>
-                <p class="text-lg mb-8">Cari lapangan berdasarkan lokasi, tanggal, waktu, dan fasilitas.</p>
+                <p class="text-lg mb-8">Cari lapangan berdasarkan lokasi, tanggal, dan waktu.</p>
             </div>
         </section>
 
@@ -27,18 +27,16 @@
             <form action="{{ route('lapangan.search') }}" method="GET" class="space-y-4">
                 <div class="flex flex-col md:flex-row gap-4 items-center">
                     <div class="flex-1 relative">
-                        <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
-                        <input type="text" name="lokasi" placeholder="Search by location (e.g., Purwokerto)"
-                            class="w-full border border-gray-300 rounded-lg py-3 px-10 focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
+                    <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+                    <input type="text"
+                        name="keyword"
+                        value="{{ request('keyword') }}"
+                        placeholder="Cari berdasarkan nama lapangan atau lokasi"
+                        class="w-full border border-gray-300 rounded-lg py-3 px-10 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
 
                     <input type="date" name="tanggal" class="border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-blue-500">
                     <input type="time" name="waktu" class="border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-blue-500">
-                    <select name="fasilitas" class="border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-blue-500">
-                        <option value="">Semua</option>
-                        <option>Indoor</option>
-                        <option>Outdoor</option>
-                    </select>
 
                     <button type="submit"
                         class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">
@@ -60,7 +58,7 @@
                         <div>
                             <h3 class="font-semibold text-gray-800">{{ $lapangan->nama }}</h3>
                             <p class="text-sm text-gray-500">
-                                {{ $lapangan->tipe_lapangan ?? 'Indoor court' }},
+                                <!-- {{ $lapangan->tipe_lapangan ?? 'Indoor court' }}, -->
                                 tersedia jam {{ $lapangan->jam_tersedia ?? '10:00 AM' }}
                             </p>
                         </div>

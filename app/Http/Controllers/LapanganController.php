@@ -33,19 +33,18 @@ class LapanganController extends Controller
     {
         $query = Lapangan::query();
 
+         if ($request->filled('keyword')) {
+        $keyword = $request->keyword;
+
+        $query->where(function ($q) use ($keyword) {
+            $q->where('nama', 'like', "%{$keyword}%")
+              ->orWhere('lokasi', 'like', "%{$keyword}%");
+        });
+    }
+
         // Filter lokasi
         if ($request->filled('lokasi')) {
             $query->where('lokasi', 'like', '%'.$request->lokasi.'%');
-        }
-
-        // Filter jenis olahraga
-        if ($request->filled('sport')) {
-            $query->where('jenis_olahraga', $request->sport);
-        }
-
-        // Filter fasilitas (Indoor/Outdoor)
-        if ($request->filled('fasilitas')) {
-            $query->where('tipe_lapangan', $request->fasilitas);
         }
 
         // Ambil hasil
