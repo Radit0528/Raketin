@@ -83,6 +83,10 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
+Route::post('/midtrans/notification', [PaymentController::class, 'notificationHandler']);
+
+Route::post('/midtrans/callback', [PaymentController::class, 'callback']);
+
 Route::post('/payment/callback', [PaymentController::class, 'callback'])
     ->name('payment.callback');
 
