@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException; // Tambahkan ini (jika belum ada)
 
 class AuthController extends Controller
 {
@@ -29,7 +30,7 @@ class AuthController extends Controller
         // 2. Coba Auth::attempt
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
+            
             // 3. ✅ Cek jika ada redirect URL dari query parameter
             $redirectUrl = $request->query('redirect');
             
@@ -39,9 +40,17 @@ class AuthController extends Controller
             }
 
             // 4. Cek Role dan Pengarahan default
-            if (Auth::user()->role === 'admin') {
+            $userRole = Auth::user()->role;
+
+            if ($userRole === 'admin') {
                 return redirect()->intended(route('admin.dashboard'))
                     ->with('success', 'Berhasil login sebagai Admin!');
+            }
+
+            // BARU: Redirect untuk Pemilik Lapangan (owner)
+            if ($userRole === 'owner') {
+                return redirect()->intended(route('owner.dashboard'))
+                    ->with('success', 'Berhasil login sebagai Pemilik Lapangan!');
             }
 
             // Default redirect untuk user biasa
@@ -65,18 +74,18 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users',
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
         ]);
 
         User::create([
-            'name' => $request->nama,
+            'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user',
+            'role' => 'user', // Akun yang mendaftar mandiri selalu menjadi user biasa
         ]);
 
         return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login.');

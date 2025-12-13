@@ -12,7 +12,10 @@ use App\Http\Controllers\EventController as PublicEventController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 
+// BARU: Import Controller dan Middleware untuk Pemilik Lapangan
+use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
 use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsOwner; // BARU
 
 /*
 |--------------------------------------------------------------------------
@@ -102,4 +105,31 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])
 
         Route::resource('lapangan', AdminLapanganController::class);
         Route::resource('event', AdminEventController::class);
+    });
+
+/*
+|--------------------------------------------------------------------------
+| OWNER ROUTES (WAJIB LOGIN + WAJIB OWNER)
+|--------------------------------------------------------------------------
+*/
+
+// BARU: Rute untuk Pemilik Lapangan
+Route::middleware(['auth', EnsureUserIsOwner::class])
+    ->prefix('pemilik')
+    ->name('owner.')
+    ->group(function () {
+
+        // Dashboard Owner
+        Route::get('/', [OwnerDashboardController::class, 'index'])
+            ->name('dashboard');
+
+        // Jadwal & harga lapangan (hanya milik owner)
+        Route::get('lapangan/{lapangan}', 
+            [OwnerDashboardController::class, 'showJadwal']
+        )->name('lapangan.jadwal');
+
+        // Update status pembayaran (pending → success)
+        Route::patch('transaksi/{transaction}/status',
+            [OwnerDashboardController::class, 'updateStatus']
+        )->name('transaksi.update-status');
     });

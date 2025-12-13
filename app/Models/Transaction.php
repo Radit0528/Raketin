@@ -68,4 +68,5 @@ class Transaction extends Model
     {
         return $query->whereDate('tanggal', '<', now()->toDateString());
     }
+
 }

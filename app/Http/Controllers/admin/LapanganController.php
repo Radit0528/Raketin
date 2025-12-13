@@ -4,103 +4,156 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lapangan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class LapanganController extends Controller
 {
-    // [R]EAD: Menampilkan daftar lapangan
+    // =====================
+    // READ: List Lapangan
+    // =====================
     public function index()
     {
-        $lapangans = Lapangan::orderBy('id', 'asc')->get();
+        $lapangans = Lapangan::with('user')
+            ->orderBy('id', 'desc')
+            ->get();
 
         return view('admin.lapangan', compact('lapangans'));
     }
 
-    // [C]REATE: Menampilkan form tambah
+    // =====================
+    // CREATE: Form
+    // =====================
     public function create()
     {
-        return view('admin.lapangan.create');
+        $owners = User::where('role', 'owner')->get();
+
+        return view('admin.lapangan.create', compact('owners'));
     }
 
-    // [C]REATE: Memproses dan menyimpan data baru
+    // =====================
+    // CREATE: Store
+    // =====================
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'lokasi' => 'nullable|string',
-            'deskripsi' => 'nullable|string',
-            'harga_per_jam' => 'required|integer|min:0',
-            'fasilitas' => 'nullable|array',
-            'fasilitas.*' => 'string',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'nama'           => 'required|string|max:255',
+            'lokasi'         => 'nullable|string',
+            'deskripsi'      => 'nullable|string',
+            'harga_per_jam'  => 'required|integer|min:0',
+            'fasilitas'      => 'nullable|array',
+            'fasilitas.*'    => 'string',
+            'gambar'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'owner_id'       => 'required|exists:users,id',
         ]);
 
-        $data = $request->except('gambar');
+        // pastikan benar owner
+        $owner = User::where('id', $request->owner_id)
+            ->where('role', 'owner')
+            ->firstOrFail();
 
-        // Convert array fasilitas menjadi string
-        $data['fasilitas'] = $request->has('fasilitas')
+        $data = $request->only([
+            'nama',
+            'lokasi',
+            'deskripsi',
+            'harga_per_jam',
+        ]);
+
+        // fasilitas
+        $data['fasilitas'] = $request->filled('fasilitas')
             ? implode(', ', $request->fasilitas)
             : null;
 
-        // Upload gambar jika ada
+        // owner -> user_id
+        $data['user_id'] = $owner->id;
+
+        // upload gambar
         if ($request->hasFile('gambar')) {
             $path = $request->file('gambar')->store('lapangan_images', 'public');
-            $data['gambar'] = '/storage/'.$path;
+            $data['gambar'] = '/storage/' . $path;
         }
 
         Lapangan::create($data);
 
-        return redirect()->route('lapangan.index')
-            ->with('success', 'Lapangan berhasil ditambahkan!');
+        return redirect()
+            ->route('lapangan.index')
+            ->with('success', 'Lapangan berhasil ditambahkan.');
     }
 
-    // [U]PDATE: Menampilkan form edit
+    // =====================
+    // UPDATE: Form
+    // =====================
     public function edit(Lapangan $lapangan)
     {
-        return view('admin.lapangan.edit', compact('lapangan'));
+        $owners = User::where('role', 'owner')->get();
+
+        return view('admin.lapangan.edit', compact('lapangan', 'owners'));
     }
 
-    // [U]PDATE: Memproses dan menyimpan perubahan
+    // =====================
+    // UPDATE: Save
+    // =====================
     public function update(Request $request, Lapangan $lapangan)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'lokasi' => 'nullable|string',
-            'deskripsi' => 'nullable|string',
-            'harga_per_jam' => 'required|integer|min:0',
-            'fasilitas' => 'nullable|string',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'nama'           => 'required|string|max:255',
+            'lokasi'         => 'nullable|string',
+            'deskripsi'      => 'nullable|string',
+            'harga_per_jam'  => 'required|integer|min:0',
+            'fasilitas'      => 'nullable|array',
+            'fasilitas.*'    => 'string',
+            'gambar'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'owner_id'       => 'required|exists:users,id',
         ]);
 
-        $data = $request->except('gambar');
+        $owner = User::where('id', $request->owner_id)
+            ->where('role', 'owner')
+            ->firstOrFail();
 
+        $data = $request->only([
+            'nama',
+            'lokasi',
+            'deskripsi',
+            'harga_per_jam',
+        ]);
+
+        $data['fasilitas'] = $request->filled('fasilitas')
+            ? implode(', ', $request->fasilitas)
+            : null;
+
+        $data['user_id'] = $owner->id;
+
+        // replace gambar
         if ($request->hasFile('gambar')) {
             if ($lapangan->gambar) {
-                $oldPath = str_replace('/storage/', 'public/', $lapangan->gambar);
-                Storage::delete($oldPath);
+                Storage::delete(str_replace('/storage/', 'public/', $lapangan->gambar));
             }
 
             $path = $request->file('gambar')->store('lapangan_images', 'public');
-            $data['gambar'] = '/storage/'.$path;
+            $data['gambar'] = '/storage/' . $path;
         }
 
         $lapangan->update($data);
 
-        return redirect()->route('lapangan.index')->with('success', 'Lapangan berhasil diperbarui!');
+        return redirect()
+            ->route('lapangan.index')
+            ->with('success', 'Lapangan berhasil diperbarui.');
     }
 
-    // [D]ELETE: Menghapus lapangan
+    // =====================
+    // DELETE
+    // =====================
     public function destroy(Lapangan $lapangan)
     {
-        // Hapus gambar dari storage jika ada
         if ($lapangan->gambar) {
-            $oldPath = str_replace('/storage/', 'public/', $lapangan->gambar);
-            Storage::delete($oldPath);
+            Storage::delete(str_replace('/storage/', 'public/', $lapangan->gambar));
         }
 
         $lapangan->delete();
 
-        return redirect()->route('lapangan.index')->with('success', 'Lapangan berhasil dihapus!');
+        return redirect()
+            ->route('lapangan.index')
+            ->with('success', 'Lapangan berhasil dihapus.');
     }
 }

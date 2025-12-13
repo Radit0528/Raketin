@@ -12,21 +12,21 @@
                 <h6 class="m-0 font-weight-bold text-primary">Formulir Tambah Lapangan</h6>
             </div>
             <div class="card-body">
-                
-                {{-- Tampilkan Error Validasi --}}
+
+                {{-- Error Validasi --}}
                 @if ($errors->any())
                     <div class="alert alert-danger">
-                        <ul>
+                        <ul class="mb-0">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
                 @endif
-                
+
                 <form method="POST" action="{{ route('lapangan.store') }}" enctype="multipart/form-data">
                     @csrf
-                    
+
                     {{-- Nama Lapangan --}}
                     <div class="mb-3">
                         <label class="form-label">Nama Lapangan <span class="text-danger">*</span></label>
@@ -39,10 +39,24 @@
                         <textarea class="form-control" name="lokasi" rows="2" required>{{ old('lokasi') }}</textarea>
                     </div>
 
+                    {{-- OWNER LAPANGAN --}}
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Pemilik Lapangan <span class="text-danger">*</span>
+                        </label>
+                        <select name="owner_id" class="form-control" required>
+                            <option value="">-- Pilih Pemilik --</option>
+                            @foreach($owners as $owner)
+                                <option value="{{ $owner->id }}">{{ $owner->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     {{-- Harga --}}
                     <div class="mb-3">
                         <label class="form-label">Harga per Jam (Rp) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" name="harga_per_jam" value="{{ old('harga_per_jam') }}" required min="0">
+                        <input type="number" class="form-control" name="harga_per_jam"
+                               value="{{ old('harga_per_jam') }}" min="0" required>
                     </div>
 
                     {{-- Deskripsi --}}
@@ -51,10 +65,9 @@
                         <textarea class="form-control" name="deskripsi" rows="3">{{ old('deskripsi') }}</textarea>
                     </div>
 
-                    {{-- Fasilitas Lapangan --}}
+                    {{-- Fasilitas --}}
                     <div class="mb-4">
                         <label class="form-label d-block">Fasilitas Lapangan</label>
-
                         <div class="row g-2">
                             @php
                                 $fasilitasList = [
@@ -79,31 +92,27 @@
                     <div class="mb-4">
                         <label class="form-label">Gambar Lapangan</label>
                         <input type="file" class="form-control" name="gambar" accept="image/*">
-                        <small class="text-muted">Maksimal 2MB (jpeg, png, jpg).</small>
+                        <small class="text-muted">Maks 2MB (jpg, jpeg, png).</small>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Simpan Lapangan</button>
                     <a href="{{ route('lapangan.index') }}" class="btn btn-secondary">Batal</a>
                 </form>
+
             </div>
         </div>
     </div>
 </div>
 
-{{-- Script Interaktif Checkbox --}}
 <script>
 document.querySelectorAll(".facility-item").forEach(item => {
     item.addEventListener("click", () => {
         const checkbox = item.querySelector("input");
         checkbox.checked = !checkbox.checked;
 
-        if (checkbox.checked) {
-            item.classList.add("border-primary", "bg-light");
-        } else {
-            item.classList.remove("border-primary", "bg-light");
-        }
+        item.classList.toggle("border-primary", checkbox.checked);
+        item.classList.toggle("bg-light", checkbox.checked);
     });
 });
 </script>
-
 @endsection

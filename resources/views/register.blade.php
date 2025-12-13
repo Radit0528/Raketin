@@ -17,7 +17,7 @@
 
       <form method="POST" action="{{ route('register') }}">
         @csrf
-        <input type="text" name="nama" placeholder="Nama Lengkap" class="w-full px-4 py-2 mb-4 border rounded-md" />
+        <input type="text" name="name" placeholder="Nama Lengkap" class="w-full px-4 py-2 mb-4 border rounded-md" />
         <input type="text" name="username" placeholder="Username" class="w-full px-4 py-2 mb-4 border rounded-md" />
         <input type="email" name="email" placeholder="Email" class="w-full px-4 py-2 mb-4 border rounded-md" />
         <input type="password" name="password" placeholder="Password" class="w-full px-4 py-2 mb-4 border rounded-md" />

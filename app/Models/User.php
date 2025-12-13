@@ -49,4 +49,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    // BARU: Relasi ke Lapangan
+    public function lapangans()
+    {
+        return $this->hasMany(Lapangan::class, 'user_id');
+    }
 }
