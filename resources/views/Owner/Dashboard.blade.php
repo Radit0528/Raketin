@@ -57,7 +57,6 @@
                     <th>Nama Lapangan</th>
                     <th>Lokasi</th>
                     <th>Harga / Jam</th>
-                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,12 +65,6 @@
                     <td>{{ $lapangan->nama }}</td>
                     <td>{{ $lapangan->lokasi }}</td>
                     <td>Rp {{ number_format($lapangan->harga_per_jam, 0, ',', '.') }}</td>
-                    <td>
-                        <a href="{{ route('owner.lapangan.jadwal', $lapangan->id) }}"
-                           class="btn btn-sm btn-warning">
-                            <i class="fas fa-calendar"></i> Kelola Jadwal
-                        </a>
-                    </td>
                 </tr>
                 @endforeach
             </tbody>

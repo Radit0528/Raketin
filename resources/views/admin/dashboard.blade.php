@@ -1,79 +1,204 @@
-@extends('layouts.admin') 
-{{-- Ganti sesuai layout-mu --}}
+@extends('layouts.admin')
 
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="p-6">
+<div class="container-fluid px-4">
 
-    {{-- Judul --}}
-    <h1 class="text-3xl font-bold mb-2">Dashboard</h1>
-    <p class="text-gray-500 mb-6">Overview</p>
+    <h1 class="mt-4">Dashboard</h1>
+    <p class="text-muted mb-4">Overview</p>
 
-    {{-- Statistik Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
-        <div class="bg-white rounded-xl p-5 shadow">
-            <p class="text-sm text-gray-500">Total Lapangan</p>
-            <h2 class="text-3xl font-bold">{{ $totalLapangan ?? 0 }}</h2>
-        </div>
-
-        <div class="bg-white rounded-xl p-5 shadow">
-            <p class="text-sm text-gray-500">Total Event</p>
-            <h2 class="text-3xl font-bold">{{ $totalEvent ?? 0 }}</h2>
-        </div>
-
-        <div class="bg-white rounded-xl p-5 shadow">
-            <p class="text-sm text-gray-500">User Terdaftar</p>
-            <h2 class="text-3xl font-bold">{{ $totalUser ?? 0 }}</h2>
-        </div>
-
-        <div class="bg-white rounded-xl p-5 shadow">
-            <p class="text-sm text-gray-500">Booking Hari Ini</p>
-            <h2 class="text-3xl font-bold">{{ $bookingToday ?? 0 }}</h2>
-        </div>
-    </div>
-
-    {{-- Grafik Placeholder --}}
-    <div class="bg-white rounded-xl shadow p-6 mb-8">
-        <h3 class="text-xl font-semibold mb-4">Grafik Booking Mingguan</h3>
-        <div class="w-full h-56 bg-gray-100 rounded flex items-center justify-center text-gray-400">
-            Grafik akan muncul di sini
-        </div>
-    </div>
-
-    {{-- Aktivitas Terbaru & Jadwal Hari Ini --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        {{-- Aktivitas --}}
-        <div class="bg-white rounded-xl shadow p-6">
-            <h3 class="text-xl font-semibold mb-4">Aktivitas Terbaru</h3>
-
-            <ul class="space-y-3">
-                @forelse ($activities ?? [] as $activity)
-                    <li class="text-gray-700">
-                        • {{ $activity }}
-                    </li>
-                @empty
-                    <li class="text-gray-400">Belum ada aktivitas terbaru</li>
-                @endforelse
-            </ul>
-        </div>
-
-        {{-- Jadwal Hari Ini --}}
-        <div class="bg-white rounded-xl shadow p-6">
-            <h3 class="text-xl font-semibold mb-4">Jadwal Hari Ini</h3>
-
-            @forelse ($jadwalHariIni ?? [] as $j)
-                <div class="border-l-4 border-blue-500 pl-3 mb-3">
-                    <p class="font-semibold">{{ $j['lapangan'] }}</p>
-                    <p class="text-sm text-gray-500">{{ $j['waktu'] }}</p>
+    {{-- ===== STATISTIK ===== --}}
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded p-3 me-3">
+                        <i class="fas fa-map"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted">Total User Lapangan</small>
+                        <h4 class="fw-bold mb-0">{{ $totalLapangan }}</h4>
+                    </div>
                 </div>
-            @empty
-                <p class="text-gray-400">Tidak ada jadwal hari ini</p>
-            @endforelse
+            </div>
         </div>
 
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-warning bg-opacity-10 text-warning rounded p-3 me-3">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted">Total Event</small>
+                        <h4 class="fw-bold mb-0">{{ $totalEvent }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 text-success rounded p-3 me-3">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted">User Terdaftar</small>
+                        <h4 class="fw-bold mb-0">{{ $totalUser }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-secondary bg-opacity-10 text-secondary rounded p-3 me-3">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted">Booking Hari Ini</small>
+                        <h4 class="fw-bold mb-0">{{ $bookingToday }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ===== GRAFIK & TASK ===== --}}
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <strong>Grafik Booking</strong>
+                    <small class="text-muted d-block">Tahun {{ now()->year }}</small>
+                </div>
+                <div class="card-body">
+                    <canvas id="bookingChart" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 d-flex justify-content-between">
+                    <strong>Tasks</strong>
+                    <small class="text-primary">This Month</small>
+                </div>
+                <div class="card-body text-center">
+                    <div class="position-relative d-inline-block">
+                        <canvas id="taskChart" width="180" height="180"></canvas>
+                        <div class="position-absolute top-50 start-50 translate-middle fw-bold fs-4">
+                            {{ $taskPercentage }}%
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-start">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2">&nbsp;</span>
+                            Berhasil ({{ $taskSuccess }})
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-warning me-2">&nbsp;</span>
+                            Pending ({{ $taskPending }})
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-danger me-2">&nbsp;</span>
+                            Gagal ({{ $taskFailed }})
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ===== TRANSAKSI TERBARU ===== --}}
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+            <strong>5 Transaksi Terbaru</strong>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Lapangan</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($recentTransactions as $trx)
+                        <tr>
+                            <td>#{{ $trx->id }}</td>
+                            <td>{{ $trx->user->name ?? '-' }}</td>
+                            <td>{{ $trx->lapangan->nama ?? '-' }}</td>
+                            <td>Rp {{ number_format($trx->total_price, 0, ',', '.') }}</td>
+                            <td>
+                                <span class="badge 
+                                    {{ $trx->status == 'completed' ? 'bg-success' :
+                                       ($trx->status == 'pending' ? 'bg-warning' : 'bg-danger') }}">
+                                    {{ ucfirst($trx->status) }}
+                                </span>
+                            </td>
+                            <td>{{ $trx->created_at->format('d M Y H:i') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">
+                                Belum ada transaksi
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </div>
 @endsection
+
+
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+   new Chart(document.getElementById('bookingChart'), {
+    type: 'line',
+    data: {
+        labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
+        datasets: [{
+            data: window.dashboardData.bookingPerMonth,
+            fill: true,
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13,110,253,0.1)',
+            tension: 0.4
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } }
+    }
+});
+
+new Chart(document.getElementById('taskChart'), {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: window.dashboardData.taskData,
+            backgroundColor: ['#198754','#ffc107','#dc3545'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        cutout: '75%',
+        plugins: { legend: { display: false } }
+    }
+});
+
+</script>
+@endpush

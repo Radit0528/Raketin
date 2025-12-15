@@ -45,30 +45,6 @@ class DashboardController extends Controller
         ));
     }
     
-    public function showJadwal(Lapangan $lapangan)
-    {
-        if ($lapangan->user_id !== Auth::id()) {
-            abort(403);
-        }
-
-        // KOREKSI: Menggunakan successfulTransactions() dan pastikan total_harga diganti amount di view
-        $bookings = $lapangan->successfulTransactions()->get(); 
-        
-        return view('owner.lapangan.jadwal', compact('lapangan', 'bookings'));
-    }
-
-    public function updateHarga(Request $request, Lapangan $lapangan)
-    {
-        if ($lapangan->user_id !== Auth::id()) {
-            abort(403);
-        }
-        
-        $request->validate(['harga_baru' => 'required|integer|min:0']);
-        
-        $lapangan->update(['harga_per_jam' => $request->harga_baru]);
-
-        return back()->with('success', 'Harga dasar berhasil diperbarui.');
-    }
     public function updateStatus(Request $request, Transaction $transaction)
     {
         // Pastikan transaksi milik lapangan owner
