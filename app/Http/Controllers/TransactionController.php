@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Lapangan;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -337,5 +338,22 @@ class TransactionController extends Controller
         $transactions = $query->paginate(20);
 
         return view('transactions.index', compact('transactions'));
+    }
+
+    /**
+     * Mark transaction as success (for owner)
+     */
+    public function markSuccess(Transaction $transaction)
+    {
+        // Optional: validasi owner lapangan
+        if ($transaction->lapangan && $transaction->lapangan->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $transaction->update([
+            'status_pembayaran' => 'success'
+        ]);
+
+        return back()->with('success', 'Transaksi berhasil dikonfirmasi.');
     }
 }

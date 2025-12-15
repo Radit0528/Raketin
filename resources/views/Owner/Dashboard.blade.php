@@ -91,7 +91,7 @@
             <tbody>
                 @forelse ($latestTransactions as $trx)
                 <tr>
-                    <td>{{ $trx->order_id }}</td>
+                    <td>{{ $trx->id }}</td>
                     <td>{{ $trx->lapangan->nama }}</td>
                     <td>{{ $trx->created_at->format('d M Y H:i') }}</td>
                     <td>Rp {{ number_format($trx->amount, 0, ',', '.') }}</td>
