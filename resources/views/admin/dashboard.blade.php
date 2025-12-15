@@ -17,7 +17,7 @@
                         <i class="fas fa-map"></i>
                     </div>
                     <div>
-                        <small class="text-muted">Total User Lapangan</small>
+                        <small class="text-muted">Total Lapangan</small>
                         <h4 class="fw-bold mb-0">{{ $totalLapangan }}</h4>
                     </div>
                 </div>
