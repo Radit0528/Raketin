@@ -23,6 +23,14 @@ class Transaction extends Model
     ];
 
     /**
+     * Relasi ke User
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
      * Relasi ke Event
      */
     public function event(): BelongsTo
@@ -69,5 +77,4 @@ class Transaction extends Model
     {
         return $query->whereDate('tanggal', '<', now()->toDateString());
     }
-
 }

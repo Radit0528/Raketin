@@ -133,26 +133,28 @@
                 </thead>
                 <tbody>
                     @forelse ($recentTransactions as $trx)
-                        <tr>
-                            <td>#{{ $trx->id }}</td>
-                            <td>{{ $trx->user->name ?? '-' }}</td>
-                            <td>{{ $trx->lapangan->nama ?? '-' }}</td>
-                            <td>Rp {{ number_format($trx->total_price, 0, ',', '.') }}</td>
-                            <td>
-                                <span class="badge 
-                                    {{ $trx->status == 'completed' ? 'bg-success' :
-                                       ($trx->status == 'pending' ? 'bg-warning' : 'bg-danger') }}">
-                                    {{ ucfirst($trx->status) }}
-                                </span>
-                            </td>
-                            <td>{{ $trx->created_at->format('d M Y H:i') }}</td>
-                        </tr>
+                    <tr>
+                        <td>#{{ $trx->id }}</td>
+                        <td>{{ $trx->user->name ?? '-' }}</td>
+                        <td>{{ $trx->lapangan->nama ?? '-' }}</td>
+                        <td>Rp {{ number_format($trx->amount, 0, ',', '.') }}</td>
+                        <td>
+                            @if ($trx->status_pembayaran == 'success')
+                            <span class="badge bg-success">Berhasil</span>
+                            @elseif ($trx->status_pembayaran == 'pending')
+                            <span class="badge bg-warning">Pending</span>
+                            @else
+                            <span class="badge bg-danger">Gagal</span>
+                            @endif
+                        </td>
+                        <td>{{ $trx->created_at->format('d M Y H:i') }}</td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-muted">
-                                Belum ada transaksi
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            Belum ada transaksi
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -162,43 +164,82 @@
 </div>
 @endsection
 
-
-
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-   new Chart(document.getElementById('bookingChart'), {
-    type: 'line',
-    data: {
-        labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
-        datasets: [{
-            data: window.dashboardData.bookingPerMonth,
-            fill: true,
-            borderColor: '#0d6efd',
-            backgroundColor: 'rgba(13,110,253,0.1)',
-            tension: 0.4
-        }]
-    },
-    options: {
-        plugins: { legend: { display: false } }
-    }
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        // Data dari controller
+        const bookingPerMonth = @json($bookingPerMonth);
+        const taskData = @json([$taskSuccess, $taskPending, $taskFailed]);
 
-new Chart(document.getElementById('taskChart'), {
-    type: 'doughnut',
-    data: {
-        datasets: [{
-            data: window.dashboardData.taskData,
-            backgroundColor: ['#198754','#ffc107','#dc3545'],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        cutout: '75%',
-        plugins: { legend: { display: false } }
-    }
-});
+        // Grafik Booking
+        const bookingCtx = document.getElementById('bookingChart');
+        if (bookingCtx) {
+            new Chart(bookingCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                    datasets: [{
+                        label: 'Booking',
+                        data: bookingPerMonth,
+                        fill: true,
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13,110,253,0.1)',
+                        tension: 0.4,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
+        // Grafik Task (Doughnut)
+        const taskCtx = document.getElementById('taskChart');
+        if (taskCtx) {
+            new Chart(taskCtx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: taskData,
+                        backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true
+                        }
+                    }
+                }
+            });
+        }
+    });
 </script>
 @endpush

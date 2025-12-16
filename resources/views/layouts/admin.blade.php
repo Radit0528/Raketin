@@ -128,5 +128,6 @@
         {{-- Hapus semua Chart.js dan DataTables bawaan SB Admin agar lebih minimalis --}}
         
         @yield('scripts')
+        @stack('scripts')
     </body>
 </html>
