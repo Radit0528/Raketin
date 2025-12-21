@@ -13,94 +13,122 @@ use Illuminate\Support\Facades\Log;
 class TransactionController extends Controller
 {
     /**
-     * Show checkout page for Lapangan
+     * ================================
+     * MENAMPILKAN HALAMAN CHECKOUT LAPANGAN
+     * ================================
      */
     public function checkoutLapangan($id, Request $request)
     {
+        // Ambil data lapangan berdasarkan ID
         $lapangan = Lapangan::findOrFail($id);
 
-        // Get booking details from query params
+        // Ambil detail booking dari query parameter URL
         $tanggal = $request->query('tanggal');
-        $start = $request->query('start');
-        $end = $request->query('end');
-        $durasi = $request->query('durasi');
+        $start   = $request->query('start');
+        $end     = $request->query('end');
+        $durasi  = $request->query('durasi');
 
-        return view('lapangan.checkout', compact('lapangan', 'tanggal', 'start', 'end', 'durasi'));
+        // Kirim data ke view checkout lapangan
+        return view('lapangan.checkout', compact(
+            'lapangan',
+            'tanggal',
+            'start',
+            'end',
+            'durasi'
+        ));
     }
 
     /**
-     * Show checkout page for Event
+     * ================================
+     * MENAMPILKAN HALAMAN CHECKOUT EVENT
+     * ================================
      */
     public function checkoutEvent($id)
     {
+        // Ambil data event
         $event = Event::findOrFail($id);
 
+        // Tampilkan halaman checkout event
         return view('event.checkout', compact('event'));
     }
 
     /**
-     * Process checkout lapangan - Create transaction and get Snap Token
+     * ================================
+     * PROSES CHECKOUT LAPANGAN
+     * - Simpan transaksi
+     * - Generate Snap Token Midtrans
+     * ================================
      */
     public function processLapangan(Request $request, $id)
     {
+        // Validasi input dari form
         $request->validate([
-            'nama_customer' => 'required|string|max:255',
-            'email_customer' => 'required|email',
-            'phone_customer' => 'required|string|max:20',
+            'nama_customer'   => 'required|string|max:255',
+            'email_customer'  => 'required|email',
+            'phone_customer'  => 'required|string|max:20',
             'tanggal_booking' => 'required|date',
-            'jam_mulai' => 'required',
-            'jam_selesai' => 'required',
-            'durasi_jam' => 'required|integer|min:1',
+            'jam_mulai'       => 'required',
+            'jam_selesai'     => 'required',
+            'durasi_jam'      => 'required|integer|min:1',
         ]);
 
+        // Ambil data lapangan
         $lapangan = Lapangan::findOrFail($id);
+
+        // Hitung total harga
         $totalAmount = $lapangan->harga_per_jam * $request->durasi_jam;
 
         try {
+            // Mulai transaksi database
             DB::beginTransaction();
 
-            // Generate Order ID
-            $orderId = 'TRX-'.date('Ymd').'-'.strtoupper(substr(uniqid(), -6));
+            // Generate Order ID unik
+            $orderId = 'TRX-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
 
-            // Create transaction
+            // Simpan transaksi ke database
             $transaction = Transaction::create([
-                'order_id' => $orderId,
-                'type' => 'lapangan',
-                'lapangan_id' => $lapangan->id,
-                'user_name' => $request->nama_customer,
-                'user_email' => $request->email_customer,
-                'user_phone' => $request->phone_customer,
-                'amount' => $totalAmount,
-                'status' => 'pending',
+                'order_id'     => $orderId,
+                'type'         => 'lapangan',
+                'lapangan_id'  => $lapangan->id,
+                'user_name'    => $request->nama_customer,
+                'user_email'   => $request->email_customer,
+                'user_phone'   => $request->phone_customer,
+                'amount'       => $totalAmount,
+                'status'       => 'pending',
                 'booking_details' => [
-                    'lapangan_nama' => $lapangan->nama,
-                    'lapangan_lokasi' => $lapangan->lokasi,
-                    'tanggal_booking' => $request->tanggal_booking,
-                    'jam_mulai' => $request->jam_mulai,
-                    'jam_selesai' => $request->jam_selesai,
-                    'durasi_jam' => $request->durasi_jam,
-                    'harga_per_jam' => $lapangan->harga_per_jam,
+                    'lapangan_nama'   => $lapangan->nama,
+                    'lapangan_lokasi'=> $lapangan->lokasi,
+                    'tanggal_booking'=> $request->tanggal_booking,
+                    'jam_mulai'      => $request->jam_mulai,
+                    'jam_selesai'    => $request->jam_selesai,
+                    'durasi_jam'     => $request->durasi_jam,
+                    'harga_per_jam'  => $lapangan->harga_per_jam,
                 ],
             ]);
 
-            // Get Snap Token
+            // Generate Snap Token Midtrans
             $snapToken = $this->getMidtransSnapToken($transaction, $lapangan);
 
-            // Save snap token
+            // Simpan Snap Token ke database
             $transaction->snap_token = $snapToken;
             $transaction->save();
 
+            // Commit transaksi database
             DB::commit();
 
+            // Response ke frontend
             return response()->json([
-                'success' => true,
-                'snap_token' => $snapToken,
-                'order_id' => $orderId,
+                'success'    => true,
+                'snap_token'=> $snapToken,
+                'order_id'  => $orderId,
             ]);
 
         } catch (\Exception $e) {
+            // Batalkan semua query jika error
             DB::rollBack();
-            Log::error('Process Lapangan Error: '.$e->getMessage());
+
+            // Simpan error ke log
+            Log::error('Process Lapangan Error: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -110,60 +138,64 @@ class TransactionController extends Controller
     }
 
     /**
-     * Process checkout event - Create transaction and get Snap Token
+     * ================================
+     * PROSES CHECKOUT EVENT
+     * ================================
      */
     public function processEvent(Request $request, $id)
     {
+        // Validasi data customer
         $request->validate([
-            'nama_customer' => 'required|string|max:255',
+            'nama_customer'  => 'required|string|max:255',
             'email_customer' => 'required|email',
             'phone_customer' => 'required|string|max:20',
         ]);
 
+        // Ambil data event
         $event = Event::findOrFail($id);
 
         try {
             DB::beginTransaction();
 
             // Generate Order ID
-            $orderId = 'TRX-'.date('Ymd').'-'.strtoupper(substr(uniqid(), -6));
+            $orderId = 'TRX-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
 
-            // Create transaction
+            // Simpan transaksi event
             $transaction = Transaction::create([
-                'order_id' => $orderId,
-                'type' => 'event',
-                'event_id' => $event->id,
-                'user_name' => $request->nama_customer,
+                'order_id'   => $orderId,
+                'type'       => 'event',
+                'event_id'   => $event->id,
+                'user_name'  => $request->nama_customer,
                 'user_email' => $request->email_customer,
                 'user_phone' => $request->phone_customer,
-                'amount' => $event->biaya_pendaftaran,
-                'status' => 'pending',
+                'amount'     => $event->biaya_pendaftaran,
+                'status'     => 'pending',
                 'booking_details' => [
-                    'event_nama' => $event->nama_event,
-                    'event_lokasi' => $event->lokasi,
+                    'event_nama'     => $event->nama_event,
+                    'event_lokasi'  => $event->lokasi,
                     'tanggal_mulai' => $event->tanggal_mulai,
-                    'tanggal_selesai' => $event->tanggal_selesai,
+                    'tanggal_selesai'=> $event->tanggal_selesai,
                 ],
             ]);
 
-            // Get Snap Token
+            // Generate Snap Token
             $snapToken = $this->getMidtransSnapToken($transaction, $event);
 
-            // Save snap token
+            // Simpan Snap Token
             $transaction->snap_token = $snapToken;
             $transaction->save();
 
             DB::commit();
 
             return response()->json([
-                'success' => true,
-                'snap_token' => $snapToken,
-                'order_id' => $orderId,
+                'success'    => true,
+                'snap_token'=> $snapToken,
+                'order_id'  => $orderId,
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Process Event Error: '.$e->getMessage());
+            Log::error('Process Event Error: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -173,187 +205,49 @@ class TransactionController extends Controller
     }
 
     /**
-     * Get Snap Token from Midtrans
+     * ================================
+     * GENERATE SNAP TOKEN MIDTRANS
+     * ================================
      */
     private function getMidtransSnapToken($transaction, $item)
     {
-        // Set Midtrans Configuration
+        // Konfigurasi Midtrans
         \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
         \Midtrans\Config::$isSanitized = true;
         \Midtrans\Config::$is3ds = true;
 
-        // Prepare parameters
+        // Tentukan item berdasarkan tipe transaksi
         if ($transaction->type === 'lapangan') {
-            $itemName = 'Booking '.$item->nama.' - '.$transaction->booking_details['durasi_jam'].' Jam';
-            $itemPrice = (int) $item->harga_per_jam;
+            $itemName     = 'Booking ' . $item->nama . ' - ' . $transaction->booking_details['durasi_jam'] . ' Jam';
+            $itemPrice    = (int) $item->harga_per_jam;
             $itemQuantity = (int) $transaction->booking_details['durasi_jam'];
         } else {
-            $itemName = 'Pendaftaran '.$item->nama_event;
-            $itemPrice = (int) $item->biaya_pendaftaran;
+            $itemName     = 'Pendaftaran ' . $item->nama_event;
+            $itemPrice    = (int) $item->biaya_pendaftaran;
             $itemQuantity = 1;
         }
 
+        // Parameter ke Midtrans
         $params = [
             'transaction_details' => [
-                'order_id' => $transaction->order_id,
-                'gross_amount' => (int) $transaction->amount,
+                'order_id'     => $transaction->order_id,
+                'gross_amount'=> (int) $transaction->amount,
             ],
-            'item_details' => [
-                [
-                    'id' => strtoupper($transaction->type).'-'.$item->id,
-                    'price' => $itemPrice,
-                    'quantity' => $itemQuantity,
-                    'name' => $itemName,
-                ],
-            ],
+            'item_details' => [[
+                'id'       => strtoupper($transaction->type) . '-' . $item->id,
+                'price'    => $itemPrice,
+                'quantity' => $itemQuantity,
+                'name'     => $itemName,
+            ]],
             'customer_details' => [
-                'first_name' => $transaction->user_name,
-                'email' => $transaction->user_email,
-                'phone' => $transaction->user_phone,
+                'first_name'=> $transaction->user_name,
+                'email'     => $transaction->user_email,
+                'phone'     => $transaction->user_phone,
             ],
         ];
 
-        // Get Snap Token
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-        return $snapToken;
-    }
-
-    /**
-     * Webhook from Midtrans
-     */
-    public function webhook(Request $request)
-    {
-        try {
-            // Set config
-            \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-            \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
-
-            $notification = new \Midtrans\Notification;
-
-            $orderId = $notification->order_id;
-            $transactionStatus = $notification->transaction_status;
-            $transactionId = $notification->transaction_id;
-            $paymentType = $notification->payment_type;
-
-            Log::info('Midtrans Webhook', [
-                'order_id' => $orderId,
-                'status' => $transactionStatus,
-            ]);
-
-            // Find transaction
-            $transaction = Transaction::where('order_id', $orderId)->first();
-
-            if (! $transaction) {
-                return response()->json(['message' => 'Transaction not found'], 404);
-            }
-
-            // Update transaction
-            $transaction->transaction_id = $transactionId;
-            $transaction->payment_type = $paymentType;
-
-            // Update status
-            if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
-                $transaction->status = 'success';
-            } elseif ($transactionStatus == 'pending') {
-                $transaction->status = 'pending';
-            } elseif ($transactionStatus == 'deny' || $transactionStatus == 'cancel' || $transactionStatus == 'expire') {
-                $transaction->status = 'failed';
-            }
-
-            $transaction->save();
-
-            return response()->json(['message' => 'OK']);
-
-        } catch (\Exception $e) {
-            Log::error('Webhook Error: '.$e->getMessage());
-
-            return response()->json(['message' => 'Error'], 500);
-        }
-    }
-
-    /**
-     * Payment finish page
-     */
-    public function finish(Request $request)
-    {
-        $orderId = $request->order_id;
-
-        if (! $orderId) {
-            return redirect('/')->with('error', 'Order ID tidak ditemukan');
-        }
-
-        $transaction = Transaction::where('order_id', $orderId)->first();
-
-        if (! $transaction) {
-            return redirect('/')->with('error', 'Transaksi tidak ditemukan');
-        }
-
-        return view('payment.finish', compact('transaction'));
-    }
-
-    /**
-     * Cancel transaction
-     */
-    public function cancel($id)
-    {
-        $transaction = Transaction::findOrFail($id);
-
-        if (! in_array($transaction->status, ['pending'])) {
-            return redirect()->back()->with('error', 'Transaksi tidak dapat dibatalkan');
-        }
-
-        $transaction->status = 'canceled';
-        $transaction->save();
-
-        return redirect('/')->with('success', 'Transaksi berhasil dibatalkan');
-    }
-
-    /**
-     * Show transaction detail
-     */
-    public function show($id)
-    {
-        $transaction = Transaction::findOrFail($id);
-
-        return view('transactions.show', compact('transaction'));
-    }
-
-    /**
-     * List all transactions
-     */
-    public function index(Request $request)
-    {
-        $query = Transaction::query()->orderBy('created_at', 'desc');
-
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->has('type') && $request->type != '') {
-            $query->where('type', $request->type);
-        }
-
-        $transactions = $query->paginate(20);
-
-        return view('transactions.index', compact('transactions'));
-    }
-
-    /**
-     * Mark transaction as success (for owner)
-     */
-    public function markSuccess(Transaction $transaction)
-    {
-        // Optional: validasi owner lapangan
-        if ($transaction->lapangan && $transaction->lapangan->user_id !== Auth::id()) {
-            abort(403);
-        }
-
-        $transaction->update([
-            'status_pembayaran' => 'success'
-        ]);
-
-        return back()->with('success', 'Transaksi berhasil dikonfirmasi.');
+        // Generate Snap Token
+        return \Midtrans\Snap::getSnapToken($params);
     }
 }

@@ -1,109 +1,178 @@
 <?php
 
+// Namespace controller utama
 namespace App\Http\Controllers;
 
+// Import model User
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException; // Tambahkan ini (jika belum ada)
 
+// Import Request untuk menangani input form
+use Illuminate\Http\Request;
+
+// Import Auth untuk autentikasi
+use Illuminate\Support\Facades\Auth;
+
+// Import Hash untuk enkripsi password
+use Illuminate\Support\Facades\Hash;
+
+// Import ValidationException (jika diperlukan untuk handling error khusus)
+use Illuminate\Validation\ValidationException;
+
+// Deklarasi AuthController
 class AuthController extends Controller
 {
-    // Tampilkan halaman login
+    /**
+     * Menampilkan halaman login
+     */
     public function showLogin()
     {
+        // Return view login
         return view('login');
     }
 
-    // Proses login
+    /**
+     * Proses login user
+     */
     public function login(Request $request)
     {
-        // 1. Validasi credentials
+        // ===============================
+        // 1. VALIDASI INPUT LOGIN
+        // ===============================
+
+        // Validasi username dan password
         $credentials = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
+        // Bersihkan spasi di username
         $credentials['username'] = trim($credentials['username']);
 
-        // 2. Coba Auth::attempt
+        // ===============================
+        // 2. PROSES AUTENTIKASI
+        // ===============================
+
+        // Coba login menggunakan Auth::attempt
         if (Auth::attempt($credentials)) {
+
+            // Regenerasi session untuk keamanan
             $request->session()->regenerate();
-            
-            // 3. ✅ Cek jika ada redirect URL dari query parameter
+
+            // ===============================
+            // 3. REDIRECT KHUSUS (JIKA ADA)
+            // ===============================
+
+            // Ambil parameter redirect dari URL (?redirect=...)
             $redirectUrl = $request->query('redirect');
-            
+
+            // Jika ada redirect URL, arahkan ke halaman tersebut
             if ($redirectUrl) {
-                // Dekode URL dan redirect ke halaman yang dimaksud
-                return redirect($redirectUrl)->with('success', 'Berhasil login!');
+                return redirect($redirectUrl)
+                    ->with('success', 'Berhasil login!');
             }
 
-            // 4. Cek Role dan Pengarahan default
+            // ===============================
+            // 4. REDIRECT BERDASARKAN ROLE
+            // ===============================
+
+            // Ambil role user yang login
             $userRole = Auth::user()->role;
 
+            // Redirect untuk admin
             if ($userRole === 'admin') {
-                return redirect()->intended(route('admin.dashboard'))
+                return redirect()
+                    ->intended(route('admin.dashboard'))
                     ->with('success', 'Berhasil login sebagai Admin!');
             }
 
-            // BARU: Redirect untuk Pemilik Lapangan (owner)
+            // Redirect untuk owner (pemilik lapangan)
             if ($userRole === 'owner') {
-                return redirect()->intended(route('owner.dashboard'))
+                return redirect()
+                    ->intended(route('owner.dashboard'))
                     ->with('success', 'Berhasil login sebagai Pemilik Lapangan!');
             }
 
-            // Default redirect untuk user biasa
-            return redirect()->intended(route('dashboard'))
+            // Redirect default untuk user biasa
+            return redirect()
+                ->intended(route('dashboard'))
                 ->with('success', 'Berhasil login!');
         }
 
-        // 5. Gagal login
-        return back()->withErrors([
-            'username' => 'Username atau password salah.',
-        ])->onlyInput('username');
+        // ===============================
+        // 5. LOGIN GAGAL
+        // ===============================
+
+        // Kembalikan ke halaman login dengan pesan error
+        return back()
+            ->withErrors([
+                'username' => 'Username atau password salah.',
+            ])
+            ->onlyInput('username');
     }
 
-    // Tampilkan halaman register
+    /**
+     * Menampilkan halaman register
+     */
     public function showRegister()
     {
+        // Return view register
         return view('register');
     }
 
-    // Proses register
+    /**
+     * Proses registrasi user baru
+     */
     public function register(Request $request)
     {
+        // Validasi input register
         $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'name' => 'required|string|max:255',      // Nama lengkap
+            'username' => 'required|string|max:255',  // Username
+            'email' => 'required|email|unique:users', // Email unik
+            'password' => 'required|min:6|confirmed', // Password + konfirmasi
         ]);
 
+        // Simpan user baru ke database
         User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'user', // Akun yang mendaftar mandiri selalu menjadi user biasa
+            'password' => Hash::make($request->password), // Enkripsi password
+            'role' => 'user', // Default role adalah user biasa
         ]);
 
-        return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login.');
+        // Redirect ke halaman login
+        return redirect()
+            ->route('login')
+            ->with('success', 'Akun berhasil dibuat! Silakan login.');
     }
 
-    // Logout
+    /**
+     * Proses logout user
+     */
     public function logout(Request $request)
     {
+        // Logout user
         Auth::logout();
+
+        // Invalidasi session lama
         $request->session()->invalidate();
+
+        // Regenerasi CSRF token
         $request->session()->regenerateToken();
 
-        return redirect()->route('dashboard')->with('success', 'Berhasil logout.');
+        // Redirect ke dashboard
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Berhasil logout.');
     }
 
-    // Dashboard user
+    /**
+     * Dashboard user (default)
+     */
     public function dashboard()
     {
+        // Tampilkan dashboard user
         return view('dashboard');
     }
 }

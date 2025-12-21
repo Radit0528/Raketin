@@ -16,13 +16,15 @@
 
 @section('content')
 
+    
+<div class="container mx-auto px-6">
     <section class="bg-gradient-to-b from-blue-900 to-blue-600 text-white py-16 text-center">
         <div class="container mx-auto px-6">
             <h1 class="text-3xl font-bold mb-2">Cari Lapangan</h1>
             <p class="text-lg mb-8">Cari lapangan berdasarkan lokasi, tanggal, dan waktu.</p>
         </div>
     </section>
-<div class="container mx-auto px-6">
+    
     <div class="bg-white rounded-2xl shadow-sm p-6 mb-10 border border-gray-100">
         <form action="{{ route('lapangan.search') }}" method="GET" class="space-y-4">
             <div class="flex flex-col md:flex-row gap-4 items-center">

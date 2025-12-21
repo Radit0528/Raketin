@@ -17,8 +17,7 @@
             <p class="text-lg mb-8">Temukan dan pesan lapangan badminton terdekat di sekitar Anda. Ikuti event dan terhubung dengan sesama pemain.</p>
 
             <div class="flex justify-center">
-                {{-- Form Pencarian harus mengarah ke route('search') --}}
-                <form action="" method="GET" class="flex w-1/2 max-w-xl">
+                <form action="{{ route('search') }}" method="GET" class="flex w-1/2 max-w-xl">
                     <input
                         type="text"
                         name="query"

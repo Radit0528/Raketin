@@ -24,6 +24,7 @@ use App\Http\Middleware\EnsureUserIsOwner; // BARU
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('dashboard');
+Route::get('/search', [HomeController::class, 'search'])->name('search');
 
 // Dashboard user TIDAK WAJIB LOGIN
 Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('user.dashboard');
